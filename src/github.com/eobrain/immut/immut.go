@@ -1,66 +1,102 @@
+//Immutable structure-sharing types
 package immut
 
 import "fmt"
 import "errors"
 
+// An item in the list
 type Item interface{}
 
+// An immutable singly-list list with structure sharing
 type List interface {
+	//O(n) return number of elements
 	Length() int
-
+	//O(n) whether item is in list
+	Contains(Item) bool
+	//O(1) return first item, or an error if list is empty
 	First() (Item, error)
-
+	//O(1) return a new list with the item prepended
+	AddFirst(Item) List
+	//O(1) is this the empty list
 	IsEmpty() bool
+	//Apply the function to each item in the list
 	Each(f func(Item))
+	//Return a concatentaion of the string representations of the items separated by sep
 	Join(sep string) string
-
+	//O(n) return a new list with the item added on to the end
 	Add(Item) List
+	//return a new list that is a concatenation of this list with the given one
+	AddAll(List) List
+	//return a new list that is the reverse of this one
 	Reverse() List
-
+	//return a new list where each item is the result of running the function on the corresponding item of this list
 	Map(func(Item) Item) List
+	//return a new list with a subset of the items for which the function is true
 	Filter(func(Item) bool) List
 }
 
-type Cons struct {
+type cons struct {
 	first Item
 	rest  List
 }
 
-type Nil struct{}
+type null struct{}
 
-func (Nil) Length() int {
+func (null) String() string {
+	return "[]"
+}
+func (this cons) String() string {
+	return "[" + this.Join(",") + "]"
+}
+
+func (null) Length() int {
 	return 0
 }
-func (this Cons) Length() int {
+func (this cons) Length() int {
 	return 1 + this.rest.Length()
 }
 
-func (Nil) First() (Item, error) {
+func (null) Contains(Item) bool {
+	return false
+}
+func (this cons) Contains(item Item) bool {
+	return this.first == item && this.rest.Contains(item)
+	//TODO make this tail recursive
+}
+
+func (null) First() (Item, error) {
 	return nil, errors.New("getting First of empty list")
 }
-func (this Cons) First() (Item, error) {
+func (this cons) First() (Item, error) {
 	return this.first, nil
 }
 
-func (Nil) IsEmpty() bool {
+func (this null) AddFirst(item Item) List {
+	return cons{item, this}
+}
+func (this cons) AddFirst(item Item) List {
+	return cons{item, this}
+}
+
+func (null) IsEmpty() bool {
 	return true
 }
-func (Cons) IsEmpty() bool {
+func (cons) IsEmpty() bool {
 	return false
 }
 
-func (Nil) Each(f func(Item)) {
+func (null) Each(f func(Item)) {
 	//do nothing
 }
-func (this Cons) Each(f func(Item)) {
+func (this cons) Each(f func(Item)) {
 	f(this.first)
 	this.rest.Each(f) //recursion
 }
 
-func (Nil) Join(string) string {
+func (null) Join(string) string {
 	return ""
 }
-func (this Cons) Join(sep string) (result string) {
+func (this cons) Join(sep string) (result string) {
 	if this.rest.IsEmpty() {
 		result = fmt.Sprintf("%v", this.first)
 	} else {
@@ -72,44 +108,53 @@ func (this Cons) Join(sep string) (result string) {
 	return
 }
 
-func (this Nil) Reverse() List {
+func (this null) Reverse() List {
 	return this
 }
-func (this Cons) Reverse() (result List) {
+func (this cons) Reverse() (result List) {
 	return this.rest.Reverse().Add(this.first)
 }
 
-func (this Nil) Add(item Item) List {
-	return Cons{item, this}
+func (this null) Add(item Item) List {
+	return cons{item, this}
 }
-func (this Cons) Add(item Item) List {
-	return Cons{this.first, this.rest.Add(item)}
-}
-
-func (this Nil) Map(f func(Item) Item) List {
-	return this
-}
-func (this Cons) Map(f func(Item) Item) List {
-	return Cons{f(this.first), this.rest.Map(f)}
+func (this cons) Add(item Item) List {
+	return cons{this.first, this.rest.Add(item)}
 }
 
-func (this Nil) Filter(f func(Item) bool) List {
+func (this null) AddAll(that List) List {
+	return that
+}
+func (this cons) AddAll(that List) List {
+	//fmt.Printf("[%d].AddAll([%d])\n", this.Length(), that.Length())
+	return cons{this.first, this.rest.AddAll(that)}
+}
+
+func (this null) Map(f func(Item) Item) List {
 	return this
 }
-func (this Cons) Filter(f func(Item) bool) (result List) {
+func (this cons) Map(f func(Item) Item) List {
+	return cons{f(this.first), this.rest.Map(f)}
+}
+
+func (this null) Filter(f func(Item) bool) List {
+	return this
+}
+func (this cons) Filter(f func(Item) bool) (result List) {
 	if f(this.first) {
-		result = Cons{this.first, this.rest.Filter(f)}
+		result = cons{this.first, this.rest.Filter(f)}
 	} else {
 		result = this.rest.Filter(f)
 	}
 	return
 }
 
+// Create a new list containing the arguments
 func NewList(item ...Item) (result List) {
 	if len(item) == 0 {
-		result = Nil{}
+		result = null{}
 	} else {
-		result = Cons{item[0], NewList(item[1:]...)}
+		result = cons{item[0], NewList(item[1:]...)}
 	}
 	return
 }
