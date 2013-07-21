@@ -5,9 +5,8 @@ import "testing"
 import "fmt"
 
 var empty = immut.NewList()
-var ints = immut.NewList(1,2,3)
-var strings = immut.NewList("one","two","three","four")
-
+var ints = immut.NewList(1, 2, 3)
+var strings = immut.NewList("one", "two", "three", "four")
 
 func TestIsEmpty(t *testing.T) {
 	if !empty.IsEmpty() {
@@ -18,7 +17,6 @@ func TestIsEmpty(t *testing.T) {
 	}
 }
 
-
 func TestLength(t *testing.T) {
 	if empty.Length() != 0 {
 		t.FailNow()
@@ -27,7 +25,6 @@ func TestLength(t *testing.T) {
 		t.FailNow()
 	}
 }
-
 
 func TestFirst(t *testing.T) {
 	firstStrings, errStrings := strings.First()
@@ -55,7 +52,6 @@ func TestFirst(t *testing.T) {
 	}
 }
 
-
 func BenchmarkNilIsEmpty(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		empty.IsEmpty()
@@ -66,7 +62,6 @@ func BenchmarkIntsIsEmpty(b *testing.B) {
 		ints.IsEmpty()
 	}
 }
-
 
 func ExampleJoin() {
 	fmt.Println(strings.Join("|"))
