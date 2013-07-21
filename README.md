@@ -8,6 +8,11 @@ GO language immutable structure-sharing collection classes
     
         Immutable structure-sharing types
     
+    
+        Immutable structure-sharing types
+    
+        Immutable structure-sharing types
+    
     TYPES
     
     type Item interface{}
