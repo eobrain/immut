@@ -16,130 +16,94 @@ package immut
 // limitations under the License.
 
 import "fmt"
-import "errors"
 
 // Create a new list containing the arguments
-func NewList(item ...Item) (result List) {
+func List(item ...Item) Seq {
 	if len(item) == 0 {
-		result = null{}
-	} else {
-		result = cons{item[0], NewList(item[1:]...)}
+		return null{}
 	}
-	return
+	return cons{item[0], List(item[1:]...)}
 }
 
 // Everything below here is private
 
 type cons struct {
 	first Item
-	rest  List
+	rest  Seq
 }
 
-type null struct{}
-
-func (null) String() string {
-	return "[]"
-}
-func (this cons) String() string {
-	return "[" + this.Join(",") + "]"
-}
-
-func (null) Length() int {
-	return 0
-}
 func (this cons) Length() int {
 	return 1 + this.rest.Length()
 }
 
-func (null) Contains(Item) bool {
-	return false
-}
 func (this cons) Contains(item Item) bool {
-	return this.first == item && this.rest.Contains(item)
+	return this.first == item || this.rest.Contains(item)
 	//TODO make this tail recursive
 }
 
-func (null) First() (Item, error) {
-	return nil, errors.New("getting First of empty list")
-}
 func (this cons) First() (Item, error) {
 	return this.first, nil
 }
 
-func (this null) AddFirst(item Item) List {
-	return cons{item, this}
-}
-func (this cons) AddFirst(item Item) List {
-	return cons{item, this}
+func (this cons) Rest() (Seq, error) {
+	return this.rest, nil
 }
 
-func (null) IsEmpty() bool {
-	return true
-}
 func (cons) IsEmpty() bool {
 	return false
 }
 
-func (null) Each(f func(Item)) {
-	//do nothing
-}
 func (this cons) Each(f func(Item)) {
 	f(this.first)
 	this.rest.Each(f) //recursion
 }
-
-func (null) Join(string) string {
-	return ""
-}
-func (this cons) Join(sep string) (result string) {
+func (this cons) Join(sep string) string {
 	if this.rest.IsEmpty() {
-		result = fmt.Sprintf("%v", this.first)
-	} else {
-		result = fmt.Sprintf("%v%s%s",
-			this.first,
-			sep,
-			this.rest.Join(sep))
+		return fmt.Sprintf("%v", this.first)
 	}
-	return
+	return fmt.Sprintf("%v%s%s",
+		this.first,
+		sep,
+		this.rest.Join(sep))
 }
 
-func (this null) Reverse() List {
-	return this
-}
-func (this cons) Reverse() (result List) {
-	return this.rest.Reverse().Add(this.first)
-}
+//func (this cons) Reverse() Seq {
+//	return this.rest.Reverse().Add(this.first)
+//}
 
-func (this null) Add(item Item) List {
+// Add to beginning
+func (this cons) Add(item Item) Seq {
 	return cons{item, this}
 }
-func (this cons) Add(item Item) List {
-	return cons{this.first, this.rest.Add(item)}
-}
 
-func (this null) AddAll(that List) List {
-	return that
-}
-func (this cons) AddAll(that List) List {
+/*func (this cons) AddLast(item Item) Seq {
+	return cons{this.first, this.rest.Add(item)}
+}*/
+
+func (this cons) AddAll(that Seq) Seq {
 	//fmt.Printf("[%d].AddAll([%d])\n", this.Length(), that.Length())
 	return cons{this.first, this.rest.AddAll(that)}
 }
 
-func (this null) Map(f func(Item) Item) List {
-	return this
+func (this cons) Forall(f func(Item) bool) bool {
+	return f(this.first) && this.rest.Forall(f)
 }
-func (this cons) Map(f func(Item) Item) List {
+
+func (this cons) Map(f func(Item) Item) Seq {
 	return cons{f(this.first), this.rest.Map(f)}
 }
 
-func (this null) Filter(f func(Item) bool) List {
-	return this
-}
-func (this cons) Filter(f func(Item) bool) (result List) {
+func (this cons) Filter(f func(Item) bool) Seq {
 	if f(this.first) {
-		result = cons{this.first, this.rest.Filter(f)}
-	} else {
-		result = this.rest.Filter(f)
+		return cons{this.first, this.rest.Filter(f)}
 	}
-	return
+	return this.rest.Filter(f)
+}
+
+func (this cons) String() string {
+	return "[" + this.Join(",") + "]"
+}
+
+func (this cons) addTreeNode(item Item, itemS string) tree {
+	return null{}.addTreeNode(item, itemS)
 }

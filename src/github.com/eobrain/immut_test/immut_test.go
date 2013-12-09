@@ -18,9 +18,9 @@ import "github.com/eobrain/immut"
 import "testing"
 import "fmt"
 
-var empty = immut.NewList()
-var ints = immut.NewList(1, 2, 3)
-var strings = immut.NewList("one", "two", "three", "four")
+var empty = immut.List()
+var ints = immut.List(1, 2, 3)
+var strings = immut.List("one", "two", "three", "four")
 
 func p(x ...interface{}) {
 	fmt.Println(x...)
@@ -63,7 +63,7 @@ func ExampleFirst() {
 	// Output:
 	// one <nil>
 	// 1 <nil>
-	// <nil> getting First of empty list
+	// <nil> getting First of empty seq
 }
 
 func ExampleAddAll() {
@@ -72,8 +72,8 @@ func ExampleAddAll() {
 	// [1,2,3,one,two,three,four]
 }
 
-func ExampleAddFirst() {
-	p(strings.AddFirst("zero"))
+func ExampleAdd() {
+	p(strings.Add("zero"))
 	// Output:
 	// [zero,one,two,three,four]
 
@@ -90,13 +90,13 @@ func ExampleEach() {
 	// 9
 }
 
-func ExampleReverse() {
+/*func ExampleReverse() {
 	p(strings.Reverse())
 	// Output:
 	// [four,three,two,one]
-}
+}*/
 
-func x8192(x immut.List) (result immut.List) {
+func x8192(x immut.Seq) (result immut.Seq) {
 	x2 := x.AddAll(x)
 	x4 := x2.AddAll(x2)
 	x8 := x4.AddAll(x4)
@@ -114,7 +114,7 @@ func x8192(x immut.List) (result immut.List) {
 }
 
 func ExampleBig() {
-	big := x8192(immut.NewList("foo"))
+	big := x8192(immut.List("foo"))
 	p(big.Length())
 	// Output:
 	// 8192
@@ -122,7 +122,7 @@ func ExampleBig() {
 
 /*
 func TestVeryBig(t *testing.T) {
-	big := x8192(immut.NewList("foo"))
+	big := x8192(immut.List("foo"))
 	vBig := x8192(big)
 	if vBig.Length() != 8192*8192 {
 		t.FailNow()
