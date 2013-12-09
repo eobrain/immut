@@ -33,7 +33,7 @@ GO language immutable structure-sharing collection classes
         //O(1) is this the empty seq
         IsEmpty() bool
         //O(n) Apply the function to each item in the seq
-        Each(f func(Item))
+        Each(func(Item))
         //O(???) Return a concatentaion of the string representations of the items separated by sep
         Join(sep string) string
         //O(n) or O(???) return a new seq with the item added on to the end

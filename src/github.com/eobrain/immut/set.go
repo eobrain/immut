@@ -20,15 +20,15 @@ import (
 	//"log"
 )
 
-// Note no attempt to keep this binary tree balanced
+// Note, no attempt to keep this binary tree balanced
 
-//recursively buyild a binary tree
-func (this tree) buildTreeFrom(remaining []Item) tree {
+//recursively build a binary tree
+func (xs tree) buildTreeFrom(remaining []Item) tree {
 	if len(remaining) == 0 {
-		return this
+		return xs
 	}
-	item := remaining[0]
-	return this.addTreeNode(item, s(item)).buildTreeFrom(remaining[1:])
+	x := remaining[0]
+	return xs.addTreeNode(x, s(x)).buildTreeFrom(remaining[1:])
 }
 
 // Create a new set containing the arguments
@@ -50,145 +50,145 @@ type tree struct {
 	right  Seq
 }
 
-func s(item Item) string {
-	return fmt.Sprintf("%v", item)
+func s(x Item) string {
+	return fmt.Sprintf("%v", x)
 }
 
-func (this tree) Length() int {
-	return 1 + this.left.Length() + this.right.Length()
+func (xs tree) Length() int {
+	return 1 + xs.left.Length() + xs.right.Length()
 }
 
-func (this tree) Contains(item Item) bool {
-	itemS := s(item) //inefficiently re-creating on every recursion
-	return item == this.value ||
-		itemS < this.valueS && this.left.Contains(item) ||
-		this.right.Contains(item)
+func (xs tree) Contains(x Item) bool {
+	itemS := s(x) //inefficiently re-creating on every recursion
+	return x == xs.value ||
+		itemS < xs.valueS && xs.left.Contains(x) ||
+		xs.right.Contains(x)
 }
 
-func (this tree) First() (Item, error) {
-	if this.left.IsEmpty() {
-		return this.value, nil
+func (xs tree) First() (Item, error) {
+	if xs.left.IsEmpty() {
+		return xs.value, nil
 	}
-	return this.left.First()
+	return xs.left.First()
 }
 
-func (this tree) Rest() (Seq, error) {
-	//log.Printf("%v.Rest()\n", this)
-	if this.left.IsEmpty() {
-		//log.Printf("%v returning right %v", this, this.right)
-		return this.right, nil
+func (xs tree) Rest() (Seq, error) {
+	//log.Printf("%v.Rest()\n", xs)
+	if xs.left.IsEmpty() {
+		//log.Printf("%v returning right %v", xs, xs.right)
+		return xs.right, nil
 	}
 	// Perhaps not most efficient
-	leftRest, _ := this.left.Rest() // guaranteed not empty
-	return leftRest.Add(this.value).AddAll(this.right), nil
+	leftRest, _ := xs.left.Rest() // guaranteed not empty
+	return leftRest.Add(xs.value).AddAll(xs.right), nil
 }
 
-func (this tree) IsEmpty() bool {
-	//log.Printf("%v.IsEmpty()", this)
+func (xs tree) IsEmpty() bool {
+	//log.Printf("%v.IsEmpty()", xs)
 	return false
 }
 
-func (this tree) Each(f func(Item)) {
-	this.left.Each(f)
-	f(this.value)
-	this.right.Each(f)
+func (xs tree) Each(f func(Item)) {
+	xs.left.Each(f)
+	f(xs.value)
+	xs.right.Each(f)
 }
-func (this tree) Join(sep string) string {
-	//TODO: make more eficient http://stackoverflow.com/a/1766304/978525
-	if this.left.IsEmpty() {
-		if this.right.IsEmpty() {
-			return this.valueS
+func (xs tree) Join(sep string) string {
+	//TODO: make more efficient http://stackoverflow.com/a/1766304/978525
+	if xs.left.IsEmpty() {
+		if xs.right.IsEmpty() {
+			return xs.valueS
 		}
-		return this.valueS + sep + this.right.Join(sep)
+		return xs.valueS + sep + xs.right.Join(sep)
 	}
-	if this.right.IsEmpty() {
-		return this.left.Join(sep) + sep + this.valueS
+	if xs.right.IsEmpty() {
+		return xs.left.Join(sep) + sep + xs.valueS
 	}
-	return this.left.Join(sep) + sep +
-		this.valueS + sep +
-		this.right.Join(sep)
+	return xs.left.Join(sep) + sep +
+		xs.valueS + sep +
+		xs.right.Join(sep)
 
 }
 
-func (this tree) addTreeNode(item Item, itemS string) tree {
-	if item == this.value {
+func (xs tree) addTreeNode(x Item, itemS string) tree {
+	if x == xs.value {
 		//set semantics -- cannnot have more than one of any value
-		return this
+		return xs
 	}
 	//hack: use string compare for ordering
-	if itemS < this.valueS {
+	if itemS < xs.valueS {
 		//put on left
-		return tree{this.value,
-			this.valueS,
-			this.left.addTreeNode(item, itemS),
-			this.right}
+		return tree{xs.value,
+			xs.valueS,
+			xs.left.addTreeNode(x, itemS),
+			xs.right}
 	}
 	//put on right
-	return tree{this.value,
-		this.valueS,
-		this.left,
-		this.right.addTreeNode(item, itemS)}
+	return tree{xs.value,
+		xs.valueS,
+		xs.left,
+		xs.right.addTreeNode(x, itemS)}
 }
 
-func (this tree) Add(item Item) Seq {
-	return this.addTreeNode(item, s(item))
+func (xs tree) Add(x Item) Seq {
+	return xs.addTreeNode(x, s(x))
 }
 
-func (this tree) AddAll(that Seq) Seq {
-	//fmt.Printf("[%d].AddAll([%d])\n", this.Length(), that.Length())
+func (xs tree) AddAll(that Seq) Seq {
+	//fmt.Printf("[%d].AddAll([%d])\n", xs.Length(), that.Length())
 	first, err := that.First()
 	if err != nil {
 		//that is empty
-		return this
+		return xs
 	}
 	rest, _ := that.Rest() //error guaranteed to be non null TODO: add tests for Rest
-	return this.Add(first).AddAll(rest)
-	//TODO, avoid this creating very unbalanced trees
+	return xs.Add(first).AddAll(rest)
+	//TODO, avoid xs creating very unbalanced trees
 }
 
-func (this tree) Forall(f func(Item) bool) bool {
-	return f(this.value) && this.left.Forall(f) && this.right.Forall(f)
+func (xs tree) Forall(f func(Item) bool) bool {
+	return f(xs.value) && xs.left.Forall(f) && xs.right.Forall(f)
 }
 
-func (this tree) Map(f func(Item) Item) Seq {
-	mappedValue := f(this.value)
+func (xs tree) Map(f func(Item) Item) Seq {
+	mappedValue := f(xs.value)
 	mappedValueS := s(mappedValue)
 	return tree{
 		mappedValue,
 		mappedValueS,
-		this.left.Map(f),
-		this.right.Map(f)}
+		xs.left.Map(f),
+		xs.right.Map(f)}
 
 }
 
-func (this tree) Filter(f func(Item) bool) Seq {
-	if this.Forall(f) {
-		return this
+func (xs tree) Filter(f func(Item) bool) Seq {
+	if xs.Forall(f) {
+		return xs
 	}
-	if f(this.value) {
+	if f(xs.value) {
 		return tree{
-			this.value,
-			this.valueS,
-			this.left.Filter(f),
-			this.right.Filter(f)}
+			xs.value,
+			xs.valueS,
+			xs.left.Filter(f),
+			xs.right.Filter(f)}
 	}
-	if this.left.IsEmpty() {
-		if this.right.IsEmpty() {
+	if xs.left.IsEmpty() {
+		if xs.right.IsEmpty() {
 			return null{}
 		}
-		return this.right.Filter(f)
+		return xs.right.Filter(f)
 	}
-	if this.right.IsEmpty() {
-		return this.left.Filter(f)
+	if xs.right.IsEmpty() {
+		return xs.left.Filter(f)
 	}
 	//tricky case: root is filtered out but left and right are not null
-	return this.left.Filter(f).AddAll(this.right.Filter(f))
+	return xs.left.Filter(f).AddAll(xs.right.Filter(f))
 }
 
-func (this tree) String() string {
-	return "[" + this.Join(",") + "]"
+func (xs tree) String() string {
+	return "[" + xs.Join(",") + "]"
 }
 
-//func (this tree) String() string {
-//	return fmt.Sprintf("(%v %v %v)", this.left, this.value, this.right)
+//func (xs tree) String() string {
+//	return fmt.Sprintf("(%v %v %v)", xs.left, xs.value, xs.right)
 //}

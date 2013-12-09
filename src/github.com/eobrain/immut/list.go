@@ -32,78 +32,78 @@ type cons struct {
 	rest  Seq
 }
 
-func (this cons) Length() int {
-	return 1 + this.rest.Length()
+func (xs cons) Length() int {
+	return 1 + xs.rest.Length()
 }
 
-func (this cons) Contains(item Item) bool {
-	return this.first == item || this.rest.Contains(item)
+func (xs cons) Contains(x Item) bool {
+	return xs.first == x || xs.rest.Contains(x)
 	//TODO make this tail recursive
 }
 
-func (this cons) First() (Item, error) {
-	return this.first, nil
+func (xs cons) First() (Item, error) {
+	return xs.first, nil
 }
 
-func (this cons) Rest() (Seq, error) {
-	return this.rest, nil
+func (xs cons) Rest() (Seq, error) {
+	return xs.rest, nil
 }
 
 func (cons) IsEmpty() bool {
 	return false
 }
 
-func (this cons) Each(f func(Item)) {
-	f(this.first)
-	this.rest.Each(f) //recursion
+func (xs cons) Each(f func(Item)) {
+	f(xs.first)
+	xs.rest.Each(f) //recursion
 }
-func (this cons) Join(sep string) string {
-	if this.rest.IsEmpty() {
-		return fmt.Sprintf("%v", this.first)
+func (xs cons) Join(sep string) string {
+	if xs.rest.IsEmpty() {
+		return fmt.Sprintf("%v", xs.first)
 	}
 	return fmt.Sprintf("%v%s%s",
-		this.first,
+		xs.first,
 		sep,
-		this.rest.Join(sep))
+		xs.rest.Join(sep))
 }
 
-//func (this cons) Reverse() Seq {
-//	return this.rest.Reverse().Add(this.first)
+//func (xs cons) Reverse() Seq {
+//	return xs.rest.Reverse().Add(xs.first)
 //}
 
 // Add to beginning
-func (this cons) Add(item Item) Seq {
-	return cons{item, this}
+func (xs cons) Add(x Item) Seq {
+	return cons{x, xs}
 }
 
-/*func (this cons) AddLast(item Item) Seq {
-	return cons{this.first, this.rest.Add(item)}
+/*func (xs cons) AddLast(x Item) Seq {
+	return cons{xs.first, xs.rest.Add(x)}
 }*/
 
-func (this cons) AddAll(that Seq) Seq {
-	//fmt.Printf("[%d].AddAll([%d])\n", this.Length(), that.Length())
-	return cons{this.first, this.rest.AddAll(that)}
+func (xs cons) AddAll(that Seq) Seq {
+	//fmt.Printf("[%d].AddAll([%d])\n", xs.Length(), that.Length())
+	return cons{xs.first, xs.rest.AddAll(that)}
 }
 
-func (this cons) Forall(f func(Item) bool) bool {
-	return f(this.first) && this.rest.Forall(f)
+func (xs cons) Forall(f func(Item) bool) bool {
+	return f(xs.first) && xs.rest.Forall(f)
 }
 
-func (this cons) Map(f func(Item) Item) Seq {
-	return cons{f(this.first), this.rest.Map(f)}
+func (xs cons) Map(f func(Item) Item) Seq {
+	return cons{f(xs.first), xs.rest.Map(f)}
 }
 
-func (this cons) Filter(f func(Item) bool) Seq {
-	if f(this.first) {
-		return cons{this.first, this.rest.Filter(f)}
+func (xs cons) Filter(f func(Item) bool) Seq {
+	if f(xs.first) {
+		return cons{xs.first, xs.rest.Filter(f)}
 	}
-	return this.rest.Filter(f)
+	return xs.rest.Filter(f)
 }
 
-func (this cons) String() string {
-	return "[" + this.Join(",") + "]"
+func (xs cons) String() string {
+	return "[" + xs.Join(",") + "]"
 }
 
-func (this cons) addTreeNode(item Item, itemS string) tree {
-	return null{}.addTreeNode(item, itemS)
+func (xs cons) addTreeNode(x Item, itemS string) tree {
+	return null{}.addTreeNode(x, itemS)
 }
