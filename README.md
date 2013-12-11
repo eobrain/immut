@@ -22,11 +22,11 @@ GO language immutable structure-sharing collection classes
     
     type Seq interface {
         //O(n) return number of elements
-        Length() int
+        Len() int
         //O(n) or O(log(n)) whether item is in seq
         Contains(Item) bool
         //O(1) or O(log(n)) return first item, or an error if seq is empty
-        First() (Item, error)
+        Front() (Item, error)
         //O(1) or O(???) return new list with all except the first item
         //or an error if seq is empty
         Rest() (Seq, error)
@@ -55,6 +55,10 @@ GO language immutable structure-sharing collection classes
     
     func List(item ...Item) Seq
         Create a new list containing the arguments
+    
+    func Remove(xs Seq, x Item) Seq
+        Return sequence resulting from removing the item, or the sequence itself
+        if item not contained in it
     
     func Set(item ...Item) Seq
         Create a new set containing the arguments

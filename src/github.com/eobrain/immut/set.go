@@ -54,8 +54,8 @@ func s(x Item) string {
 	return fmt.Sprintf("%v", x)
 }
 
-func (xs tree) Length() int {
-	return 1 + xs.left.Length() + xs.right.Length()
+func (xs tree) Len() int {
+	return 1 + xs.left.Len() + xs.right.Len()
 }
 
 func (xs tree) Contains(x Item) bool {
@@ -65,11 +65,11 @@ func (xs tree) Contains(x Item) bool {
 		xs.right.Contains(x)
 }
 
-func (xs tree) First() (Item, error) {
+func (xs tree) Front() (Item, error) {
 	if xs.left.IsEmpty() {
 		return xs.value, nil
 	}
-	return xs.left.First()
+	return xs.left.Front()
 }
 
 func (xs tree) Rest() (Seq, error) {
@@ -131,12 +131,13 @@ func (xs tree) addTreeNode(x Item, itemS string) tree {
 }
 
 func (xs tree) Add(x Item) Seq {
+	//log.Printf("%v.Add(%v)\n", xs, x)
 	return xs.addTreeNode(x, s(x))
 }
 
 func (xs tree) AddAll(that Seq) Seq {
-	//fmt.Printf("[%d].AddAll([%d])\n", xs.Length(), that.Length())
-	first, err := that.First()
+	//fmt.Printf("[%d].AddAll([%d])\n", xs.Len(), that.Len())
+	first, err := that.Front()
 	if err != nil {
 		//that is empty
 		return xs
@@ -166,12 +167,14 @@ func (xs tree) Filter(f func(Item) bool) Seq {
 		return xs
 	}
 	if f(xs.value) {
+		// root is included
 		return tree{
 			xs.value,
 			xs.valueS,
 			xs.left.Filter(f),
 			xs.right.Filter(f)}
 	}
+	// exclude root
 	if xs.left.IsEmpty() {
 		if xs.right.IsEmpty() {
 			return null{}
@@ -184,7 +187,6 @@ func (xs tree) Filter(f func(Item) bool) Seq {
 	//tricky case: root is filtered out but left and right are not null
 	return xs.left.Filter(f).AddAll(xs.right.Filter(f))
 }
-
 func (xs tree) String() string {
 	return "[" + xs.Join(",") + "]"
 }

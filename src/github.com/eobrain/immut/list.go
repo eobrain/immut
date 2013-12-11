@@ -32,8 +32,8 @@ type cons struct {
 	rest  Seq
 }
 
-func (xs cons) Length() int {
-	return 1 + xs.rest.Length()
+func (xs cons) Len() int {
+	return 1 + xs.rest.Len()
 }
 
 func (xs cons) Contains(x Item) bool {
@@ -41,7 +41,7 @@ func (xs cons) Contains(x Item) bool {
 	//TODO make this tail recursive
 }
 
-func (xs cons) First() (Item, error) {
+func (xs cons) Front() (Item, error) {
 	return xs.first, nil
 }
 
@@ -81,7 +81,7 @@ func (xs cons) Add(x Item) Seq {
 }*/
 
 func (xs cons) AddAll(that Seq) Seq {
-	//fmt.Printf("[%d].AddAll([%d])\n", xs.Length(), that.Length())
+	//fmt.Printf("[%d].AddAll([%d])\n", xs.Len(), that.Len())
 	return cons{xs.first, xs.rest.AddAll(that)}
 }
 
@@ -99,7 +99,6 @@ func (xs cons) Filter(f func(Item) bool) Seq {
 	}
 	return xs.rest.Filter(f)
 }
-
 func (xs cons) String() string {
 	return "[" + xs.Join(",") + "]"
 }

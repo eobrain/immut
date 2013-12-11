@@ -30,10 +30,40 @@ func ExampleSetString() {
 	p(emptySet)
 	p(intsSet)
 	p(stringsSet)
+	p(immut.Set(2, 4, 3, 1))
 	// Output:
 	// []
 	// [1,2,3]
 	// [four,one,three,two]
+	// [1,2,3,4]
+}
+
+func ExampleSetRemove() {
+	p(immut.Remove(emptySet, 33))
+	p(immut.Remove(intsSet, 33))
+	p(immut.Remove(intsSet, "foo"))
+	p(immut.Remove(intsSet, 1))
+	p(immut.Remove(intsSet, 2))
+	p(immut.Remove(intsSet, 3))
+	p(stringsSet, "- one  =", immut.Remove(stringsSet, "one"))
+	p(stringsSet, "- two  =", immut.Remove(stringsSet, "two"))
+	p(stringsSet, "- four =", immut.Remove(stringsSet, "four"))
+	p(immut.Remove(immut.Set(2, 4, 3, 1), 2))
+	p(immut.Remove(immut.Set(2, 4, 3, 1), 4))
+	p(immut.Remove(immut.Set(2, 4, 3, 1), 1))
+	// Output:
+	// []
+	// [1,2,3]
+	// [1,2,3]
+	// [2,3]
+	// [1,3]
+	// [1,2]
+	// [four,one,three,two] - one  = [four,three,two]
+	// [four,one,three,two] - two  = [four,one,three]
+	// [four,one,three,two] - four = [one,three,two]
+	// [1,3,4]
+	// [1,2,3]
+	// [2,3,4]
 }
 
 func ExampleSetIsEmpty() {
@@ -44,10 +74,10 @@ func ExampleSetIsEmpty() {
 	// false
 }
 
-func ExampleSetLength() {
-	p(emptySet.Length())
-	p(intsSet.Length())
-	p(stringsSet.Length())
+func ExampleSetLen() {
+	p(emptySet.Len())
+	p(intsSet.Len())
+	p(stringsSet.Len())
 	// Output:
 	// 0
 	// 3
@@ -56,14 +86,14 @@ func ExampleSetLength() {
 
 func ExampleSetFirst() {
 
-	p(stringsSet.First())
-	p(intsSet.First())
-	p(emptySet.First())
+	p(stringsSet.Front())
+	p(intsSet.Front())
+	p(emptySet.Front())
 
 	// Output:
 	// four <nil>
 	// 1 <nil>
-	// <nil> getting First of empty seq
+	// <nil> getting Front of empty seq
 }
 
 func ExampleSetAddAll() {
@@ -97,6 +127,40 @@ func ExampleSetAdd() {
 
 }
 
+func ExampleSetAddAnyOrder() {
+	p(immut.Set(1).Add(2))
+	p(immut.Set(2).Add(1))
+	p(immut.Set("aaa").Add("bbb"))
+	p(immut.Set("bbb").Add("aaa"))
+	// Output:
+	// [1,2]
+	// [1,2]
+	// [aaa,bbb]
+	// [aaa,bbb]
+}
+
+func ExampleSetInitAnyOrder() {
+	p(immut.Set(1, 2))
+	p(immut.Set(2, 1))
+	// Output:
+	// [1,2]
+	// [1,2]
+}
+
+func ExampleSetisSet() {
+	p(intsSet.Add(1))
+	p(intsSet.Add(2))
+	p(intsSet.Add(3))
+	p(intsSet.Add(0))
+	p(intsSet.Add(4))
+	// Output:
+	// [1,2,3]
+	// [1,2,3]
+	// [1,2,3]
+	// [0,1,2,3]
+	// [1,2,3,4]
+}
+
 func ExampleSetEach() {
 	intsSet.Each(func(item immut.Item) {
 		i := item.(int)
@@ -110,7 +174,7 @@ func ExampleSetEach() {
 
 func ExampleSetBigAllSame() {
 	big := x8192(immut.Set("foo"))
-	p(big.Length())
+	p(big.Len())
 	// Output:
 	// 1
 }
@@ -127,7 +191,7 @@ func random(n int) immut.Seq {
 func ExampleSetBig() {
 
 	big := random(8888)
-	p(big.Length())
+	p(big.Len())
 	// Output:
 	// 8888
 }
@@ -136,7 +200,7 @@ func ExampleSetBig() {
 func TestVeryBig(t *testing.T) {
 	big := x8192(immut.Set("foo"))
 	vBig := x8192(big)
-	if vBig.Length() != 8192*8192 {
+	if vBig.Len() != 8192*8192 {
 		t.FailNow()
 	}
 }

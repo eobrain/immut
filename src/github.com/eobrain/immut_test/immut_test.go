@@ -14,9 +14,12 @@ package test
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import "github.com/eobrain/immut"
-import "testing"
-import "fmt"
+import (
+	"fmt"
+	"testing"
+
+	"github.com/eobrain/immut"
+)
 
 var empty = immut.List()
 var ints = immut.List(1, 2, 3)
@@ -36,6 +39,28 @@ func ExampleString() {
 	// [one,two,three,four]
 }
 
+func ExampleRemove() {
+	p(immut.Remove(empty, 33))
+	p(immut.Remove(ints, 33))
+	p(immut.Remove(ints, "foo"))
+	p(immut.Remove(ints, 1))
+	p(immut.Remove(ints, 2))
+	p(immut.Remove(ints, 3))
+	p(immut.Remove(strings, "one"))
+	p(immut.Remove(strings, "two"))
+	p(immut.Remove(strings, "four"))
+	// Output:
+	// []
+	// [1,2,3]
+	// [1,2,3]
+	// [2,3]
+	// [1,3]
+	// [1,2]
+	// [two,three,four]
+	// [one,three,four]
+	// [one,two,three]
+}
+
 func ExampleIsEmpty() {
 	p(empty.IsEmpty())
 	p(ints.IsEmpty())
@@ -44,26 +69,26 @@ func ExampleIsEmpty() {
 	// false
 }
 
-func ExampleLength() {
-	p(empty.Length())
-	p(ints.Length())
-	p(strings.Length())
+func ExampleLen() {
+	p(empty.Len())
+	p(ints.Len())
+	p(strings.Len())
 	// Output:
 	// 0
 	// 3
 	// 4
 }
 
-func ExampleFirst() {
+func ExampleFront() {
 
-	p(strings.First())
-	p(ints.First())
-	p(empty.First())
+	p(strings.Front())
+	p(ints.Front())
+	p(empty.Front())
 
 	// Output:
 	// one <nil>
 	// 1 <nil>
-	// <nil> getting First of empty seq
+	// <nil> getting Front of empty seq
 }
 
 func ExampleAddAll() {
@@ -115,7 +140,7 @@ func x8192(x immut.Seq) (result immut.Seq) {
 
 func ExampleBig() {
 	big := x8192(immut.List("foo"))
-	p(big.Length())
+	p(big.Len())
 	// Output:
 	// 8192
 }
@@ -124,7 +149,7 @@ func ExampleBig() {
 func TestVeryBig(t *testing.T) {
 	big := x8192(immut.List("foo"))
 	vBig := x8192(big)
-	if vBig.Length() != 8192*8192 {
+	if vBig.Len() != 8192*8192 {
 		t.FailNow()
 	}
 }

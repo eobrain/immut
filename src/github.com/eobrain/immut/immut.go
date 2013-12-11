@@ -22,11 +22,11 @@ type Item interface{}
 // Where multiple O(...) given, first is for list, second is for tree set
 type Seq interface {
 	//O(n) return number of elements
-	Length() int
+	Len() int
 	//O(n) or O(log(n)) whether item is in seq
 	Contains(Item) bool
 	//O(1) or O(log(n)) return first item, or an error if seq is empty
-	First() (Item, error)
+	Front() (Item, error)
 	//O(1) or O(???) return new list with all except the first item
 	//or an error if seq is empty
 	Rest() (Seq, error)
@@ -53,4 +53,10 @@ type Seq interface {
 	Filter(func(Item) bool) Seq
 
 	addTreeNode(Item, string) tree
+}
+
+// Return sequence resulting from removing the item, or the sequence
+// itself if item not contained in it
+func Remove(xs Seq, x Item) Seq {
+	return xs.Filter(func(y Item) bool { return y != x })
 }

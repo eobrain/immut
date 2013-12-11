@@ -26,7 +26,7 @@ func (null) String() string {
 	return "[]"
 }
 
-func (null) Length() int {
+func (null) Len() int {
 	return 0
 }
 
@@ -34,8 +34,8 @@ func (null) Contains(Item) bool {
 	return false
 }
 
-func (null) First() (Item, error) {
-	return nil, errors.New("getting First of empty seq")
+func (null) Front() (Item, error) {
+	return nil, errors.New("getting Front of empty seq")
 }
 
 func (null) Rest() (Seq, error) {
