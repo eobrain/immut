@@ -5,6 +5,7 @@ PACKAGE
 -----
 
 package immut
+
     import "github.com/eobrain/immut"
 
     Immutable Structure-Sharing Types
@@ -13,9 +14,11 @@ TYPES
 -----
 
 type Item interface{}
+
     An item in the seq
 
 type Seq interface {
+
     //O(n) return number of elements
     Len() int
     //O(n) or O(log(n)) whether item is in seq
@@ -45,17 +48,21 @@ type Seq interface {
     Filter(func(Item) bool) Seq
     // contains filtered or unexported methods
 }
+
     An immutable sequence of Items Where multiple O(...) given, first is for
     list, second is for tree set
 
 func List(item ...Item) Seq
+
     Create a new list containing the arguments
 
 func Remove(xs Seq, x Item) Seq
+
     Return sequence resulting from removing the item, or the sequence itself
     if item not contained in it
 
 func Set(item ...Item) Seq
+
     Create a new set containing the arguments
 
 
