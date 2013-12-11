@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-
 all: test README.md
+	cat README.md
 
 ENV=GOPATH=`pwd` 
 
@@ -22,8 +21,12 @@ README.md: src/github.com/eobrain/immut/*.go
 	echo 'GO language immutable structure-sharing collection classes' >$@
 	echo '=========================================================='>>$@
 	echo                                                             >>$@
-	$(ENV) godoc github.com/eobrain/immut | awk '{print "    " $$0}' >>$@
+	$(ENV) godoc -html github.com/eobrain/immut  >>$@
+
+#	$(ENV) godoc github.com/eobrain/immut | awk '{print "    " $$0}' >>$@
 
 test:
 	$(ENV) go test github.com/eobrain/immut_test
+
+
 

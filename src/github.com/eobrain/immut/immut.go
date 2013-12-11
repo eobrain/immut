@@ -1,4 +1,4 @@
-//Immutable structure-sharing types
+// Immutable Structure-Sharing Types
 package immut
 
 // Copyright 2013 Eamonn O'Brien-Strain
