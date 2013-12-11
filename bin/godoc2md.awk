@@ -1,9 +1,23 @@
+BEGIN {
+ code=0
+}
 {
   if( /^[A-Z][A-Z][A-Z]*$/ ) {
-    print $0 "\n-----";
-  } else if ( /^[^ ]/ ) {
-    print $0 "\n";
+    if (code) {
+      print "````\n";
+      code = 0;
+    }
+    print
   } else {
-    print;
+    if (!code) {
+      print "````go\n";
+      code = 1;
+    }
+    print
   }
+}
+END {
+    if (code) {
+      print "````\n";
+    }
 }
