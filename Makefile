@@ -17,11 +17,12 @@ all: test README.md
 
 ENV=GOPATH=`pwd` 
 
-README.md: src/github.com/eobrain/immut/*.go
+README.md: src/github.com/eobrain/immut/*.go bin/godoc2md.awk
 	echo 'GO language immutable structure-sharing collection classes' >$@
 	echo '=========================================================='>>$@
 	echo                                                             >>$@
-	$(ENV) godoc -html github.com/eobrain/immut  >>$@
+	$(ENV) godoc github.com/eobrain/immut | awk -f bin/godoc2md.awk  >>$@
+
 
 #	$(ENV) godoc github.com/eobrain/immut | awk '{print "    " $$0}' >>$@
 
