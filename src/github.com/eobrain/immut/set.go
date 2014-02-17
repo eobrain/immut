@@ -27,14 +27,14 @@ func Set(item ...Item) Seq {
 		return null{}
 	}
 	first := item[0]
-	return tree{first, s(first), null{}, null{}}.buildTreeFrom(
+	return (&tree{first, s(first), null{}, null{}}).buildTreeFrom(
 		item[1:])
 }
 
 // Everything below here is private
 
 // Recursively build a binary tree. O(n*log(n))
-func (xs tree) buildTreeFrom(remaining []Item) tree {
+func (xs *tree) buildTreeFrom(remaining []Item) *tree {
 	if len(remaining) == 0 {
 		return xs
 	}
@@ -53,18 +53,18 @@ func s(x Item) string {
 	return fmt.Sprintf("%v", x)
 }
 
-func (xs tree) Len() int {
+func (xs *tree) Len() int {
 	return 1 + xs.left.Len() + xs.right.Len()
 }
 
-func (xs tree) Contains(x Item) bool {
+func (xs *tree) Contains(x Item) bool {
 	itemS := s(x) //inefficiently re-creating on every recursion
 	return x == xs.value ||
 		itemS < xs.valueS && xs.left.Contains(x) ||
 		xs.right.Contains(x)
 }
 
-func (xs tree) Front() (Item, error) {
+func (xs *tree) Front() (Item, error) {
 	if xs.left.IsEmpty() {
 		return xs.value, nil
 	}
@@ -72,7 +72,7 @@ func (xs tree) Front() (Item, error) {
 }
 
 // O(n^2 * log(n))
-func (xs tree) Rest() (Seq, error) {
+func (xs *tree) Rest() (Seq, error) {
 	if xs.left.IsEmpty() {
 		return xs.right, nil
 	}
@@ -81,18 +81,18 @@ func (xs tree) Rest() (Seq, error) {
 	return leftRest.AddFront(xs.value).AddAll(xs.right), nil
 }
 
-func (xs tree) IsEmpty() bool {
+func (xs *tree) IsEmpty() bool {
 	//log.Printf("%v.IsEmpty()", xs)
 	return false
 }
 
-func (xs tree) Each(f func(Item)) {
+func (xs *tree) Each(f func(Item)) {
 	xs.left.Each(f)
 	f(xs.value)
 	xs.right.Each(f)
 }
 
-func (xs tree) Join(sep string, buf *bytes.Buffer) {
+func (xs *tree) Join(sep string, buf *bytes.Buffer) {
 	if !xs.left.IsEmpty() {
 		xs.left.Join(sep, buf)
 		buf.WriteString(sep)
@@ -104,7 +104,7 @@ func (xs tree) Join(sep string, buf *bytes.Buffer) {
 	}
 }
 
-//func (xs tree) Join(sep string) string {
+//func (xs *tree) Join(sep string) string {
 //	var buf bytes.Buffer
 //	xs.join(sep, &buf)
 //	return buffer.String()
@@ -127,7 +127,7 @@ func (xs tree) Join(sep string, buf *bytes.Buffer) {
 //}
 
 /// O(log n)
-func (xs tree) addTreeNode(x Item, itemS string) tree {
+func (xs *tree) addTreeNode(x Item, itemS string) *tree {
 	if x == xs.value {
 		//set semantics -- cannnot have more than one of any value
 		return xs
@@ -135,35 +135,35 @@ func (xs tree) addTreeNode(x Item, itemS string) tree {
 	//hack: use string compare for ordering
 	if itemS < xs.valueS {
 		//put on left
-		return tree{xs.value,
+		return &tree{xs.value,
 			xs.valueS,
 			xs.left.addTreeNode(x, itemS),
 			xs.right}
 	}
 	//put on right
-	return tree{xs.value,
+	return &tree{xs.value,
 		xs.valueS,
 		xs.left,
 		xs.right.addTreeNode(x, itemS)}
 }
 
 // Cannot reverse a sorted set, so just return the set itself
-func (xs tree) Reverse() Seq {
+func (xs *tree) Reverse() Seq {
 	return xs
 }
 
 // O(log n)
-func (xs tree) AddFront(x Item) Seq {
+func (xs *tree) AddFront(x Item) Seq {
 	//log.Printf("%v.Add(%v)\n", xs, x)
 	return xs.addTreeNode(x, s(x))
 }
 
-func (xs tree) AddBack(x Item) Seq {
+func (xs *tree) AddBack(x Item) Seq {
 	return xs.AddFront(x) // same
 }
 
 // O(n*log(n))
-func (xs tree) AddAll(that Seq) Seq {
+func (xs *tree) AddAll(that Seq) Seq {
 	//fmt.Printf("[%d].AddAll([%d])\n", xs.Len(), that.Len())
 	first, err := that.Front()
 	if err != nil {
@@ -175,14 +175,14 @@ func (xs tree) AddAll(that Seq) Seq {
 	//TODO, avoid xs creating very unbalanced trees
 }
 
-func (xs tree) Forall(f func(Item) bool) bool {
+func (xs *tree) Forall(f func(Item) bool) bool {
 	return f(xs.value) && xs.left.Forall(f) && xs.right.Forall(f)
 }
 
-func (xs tree) Map(f func(Item) Item) Seq {
+func (xs *tree) Map(f func(Item) Item) Seq {
 	mappedValue := f(xs.value)
 	mappedValueS := s(mappedValue)
-	return tree{
+	return &tree{
 		mappedValue,
 		mappedValueS,
 		xs.left.Map(f),
@@ -190,13 +190,13 @@ func (xs tree) Map(f func(Item) Item) Seq {
 
 }
 
-func (xs tree) Filter(f func(Item) bool) Seq {
+func (xs *tree) Filter(f func(Item) bool) Seq {
 	if xs.Forall(f) {
 		return xs
 	}
 	if f(xs.value) {
 		// root is included
-		return tree{
+		return &tree{
 			xs.value,
 			xs.valueS,
 			xs.left.Filter(f),
@@ -215,7 +215,7 @@ func (xs tree) Filter(f func(Item) bool) Seq {
 	//tricky case: root is filtered out but left and right are not null
 	return xs.left.Filter(f).AddAll(xs.right.Filter(f))
 }
-func (xs tree) String() string {
+func (xs *tree) String() string {
 	var buf bytes.Buffer
 	buf.WriteString("{")
 	xs.Join(",", &buf)
@@ -223,6 +223,6 @@ func (xs tree) String() string {
 	return buf.String()
 }
 
-//func (xs tree) String() string {
+//func (xs *tree) String() string {
 //	return fmt.Sprintf("(%v %v %v)", xs.left, xs.value, xs.right)
 //}

@@ -73,7 +73,7 @@ type Seq interface {
 	//function is true
 	Filter(func(Item) bool) Seq
 
-	addTreeNode(Item, string) tree
+	addTreeNode(Item, string) *tree
 }
 
 // Return sequence resulting from removing the item, or the sequence

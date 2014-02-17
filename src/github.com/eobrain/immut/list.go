@@ -24,7 +24,7 @@ func List(item ...Item) Seq {
 	if len(item) == 0 {
 		return null{}
 	}
-	return cons{item[0], List(item[1:]...)}
+	return &cons{item[0], List(item[1:]...)}
 }
 
 // Everything below here is private
@@ -34,20 +34,20 @@ type cons struct {
 	rest  Seq
 }
 
-func (xs cons) Len() int {
+func (xs *cons) Len() int {
 	return 1 + xs.rest.Len()
 }
 
-func (xs cons) Contains(x Item) bool {
+func (xs *cons) Contains(x Item) bool {
 	return xs.first == x || xs.rest.Contains(x)
 	//TODO make this tail recursive
 }
 
-func (xs cons) Front() (Item, error) {
+func (xs *cons) Front() (Item, error) {
 	return xs.first, nil
 }
 
-func (xs cons) Rest() (Seq, error) {
+func (xs *cons) Rest() (Seq, error) {
 	return xs.rest, nil
 }
 
@@ -55,13 +55,13 @@ func (cons) IsEmpty() bool {
 	return false
 }
 
-func (xs cons) Each(f func(Item)) {
+func (xs *cons) Each(f func(Item)) {
 	f(xs.first)
 	xs.rest.Each(f) //recursion
 }
 
 // O(n)
-func (xs cons) Join(sep string, buf *bytes.Buffer) {
+func (xs *cons) Join(sep string, buf *bytes.Buffer) {
 	buf.WriteString(fmt.Sprintf("%v", xs.first))
 	if !xs.rest.IsEmpty() {
 		buf.WriteString(sep)
@@ -69,39 +69,39 @@ func (xs cons) Join(sep string, buf *bytes.Buffer) {
 	}
 }
 
-func (xs cons) Reverse() Seq {
+func (xs *cons) Reverse() Seq {
 	return xs.rest.Reverse().AddBack(xs.first)
 }
 
 // Add to beginning
-func (xs cons) AddFront(x Item) Seq {
-	return cons{x, xs}
+func (xs *cons) AddFront(x Item) Seq {
+	return &cons{x, xs}
 }
 
-func (xs cons) AddBack(x Item) Seq {
-	return cons{xs.first, xs.rest.AddBack(x)}
+func (xs *cons) AddBack(x Item) Seq {
+	return &cons{xs.first, xs.rest.AddBack(x)}
 }
 
-func (xs cons) AddAll(that Seq) Seq {
+func (xs *cons) AddAll(that Seq) Seq {
 	//fmt.Printf("[%d].AddAll([%d])\n", xs.Len(), that.Len())
-	return cons{xs.first, xs.rest.AddAll(that)}
+	return &cons{xs.first, xs.rest.AddAll(that)}
 }
 
-func (xs cons) Forall(f func(Item) bool) bool {
+func (xs *cons) Forall(f func(Item) bool) bool {
 	return f(xs.first) && xs.rest.Forall(f)
 }
 
-func (xs cons) Map(f func(Item) Item) Seq {
-	return cons{f(xs.first), xs.rest.Map(f)}
+func (xs *cons) Map(f func(Item) Item) Seq {
+	return &cons{f(xs.first), xs.rest.Map(f)}
 }
 
-func (xs cons) Filter(f func(Item) bool) Seq {
+func (xs *cons) Filter(f func(Item) bool) Seq {
 	if f(xs.first) {
-		return cons{xs.first, xs.rest.Filter(f)}
+		return &cons{xs.first, xs.rest.Filter(f)}
 	}
 	return xs.rest.Filter(f)
 }
-func (xs cons) String() string {
+func (xs *cons) String() string {
 	var buf bytes.Buffer
 	buf.WriteString("[")
 	xs.Join(",", &buf)
@@ -109,6 +109,6 @@ func (xs cons) String() string {
 	return buf.String()
 }
 
-func (xs cons) addTreeNode(x Item, itemS string) tree {
+func (xs *cons) addTreeNode(x Item, itemS string) *tree {
 	return null{}.addTreeNode(x, itemS)
 }

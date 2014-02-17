@@ -60,11 +60,11 @@ func (this null) Reverse() Seq {
 }
 
 func (this null) AddFront(item Item) Seq {
-	return cons{item, this}
+	return &cons{item, this}
 }
 
 func (this null) AddBack(item Item) Seq {
-	return cons{item, this}
+	return &cons{item, this}
 }
 
 func (this null) AddAll(that Seq) Seq {
@@ -83,6 +83,6 @@ func (this null) Filter(f func(Item) bool) Seq {
 	return this
 }
 
-func (this null) addTreeNode(item Item, itemS string) tree {
-	return tree{item, itemS, null{}, null{}}
+func (this null) addTreeNode(item Item, itemS string) *tree {
+	return &tree{item, itemS, null{}, null{}}
 }
