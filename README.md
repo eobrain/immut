@@ -5,8 +5,8 @@ PACKAGE DOCUMENTATION
 package immut
     import "github.com/eobrain/immut"
 
-    The immut package contains immutable structure-sharing collections in
-    the style of Scala or Clojure.
+    The immut package contains immutable structure-sharing collections for
+    Go in the style of Scala or Clojure.
 
 
 ````
@@ -16,6 +16,8 @@ FUNCTIONS
 
 
 func Join(xs Seq, sep string) string
+    Return a string formed by concatenation of the string representations of
+    the items separated by sep. O(n)
 
 
 ````
@@ -29,6 +31,7 @@ type Item interface{}
 
 
 func Back(xs Seq) (Item, error)
+    Return the last item in the sequence. O(n) or O(n^3 * log(n))
 
 
 func Nth(xs Seq, n uint) (Item, error)
@@ -61,7 +64,7 @@ type Seq interface {
     // Each Apply the function to each item in the seq. O(n)
     Each(func(Item))
 
-    // Join writes a concatentaion of the string representations
+    // Join writes a concatenation of the string representations
     // of the items separated by sep into the Writer. O(n)
     Join(string, *bytes.Buffer)
 
@@ -95,7 +98,7 @@ type Seq interface {
 
 
 func List(item ...Item) Seq
-    Create a new list containing the arguments
+    Create a new list containing the arguments.
 
 
 func Remove(xs Seq, x Item) Seq

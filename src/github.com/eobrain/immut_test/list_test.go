@@ -115,13 +115,13 @@ func ExampleBig() {
 	// 8192
 }
 
-func TestVeryBig(t *testing.T) {
+/*func TestVeryBig(t *testing.T) {
 	big := x8192(immut.List("foo"))
 	vBig := x8192(big)
 	if vBig.Len() != 8192*8192 {
 		t.FailNow()
 	}
-}
+}*/
 
 func BenchmarkIntsIsEmpty(b *testing.B) {
 	for i := 0; i < b.N; i++ {

@@ -12,10 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-all: test README.md
+all: test spell
 	cat README.md
 
 ENV=GOPATH=`pwd` 
+
+spell: README.md dict~
+	sed -r 's/([a-z])([A-Z])/\1 \2/g' <README.md | spell | sort -u | awk 'length($1)>2{print}'x
+#	ispell -C -p dict <README.md
 
 README.md: src/github.com/eobrain/immut/*.go bin/godoc2md.awk
 	$(ENV) godoc github.com/eobrain/immut | awk -f bin/godoc2md.awk  > $@

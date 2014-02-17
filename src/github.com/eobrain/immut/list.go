@@ -19,7 +19,7 @@ import (
 	"fmt"
 )
 
-// Create a new list containing the arguments
+// Create a new list containing the arguments.
 func List(item ...Item) Seq {
 	if len(item) == 0 {
 		return null{}
@@ -101,6 +101,7 @@ func (xs *cons) Filter(f func(Item) bool) Seq {
 	}
 	return xs.rest.Filter(f)
 }
+
 func (xs *cons) String() string {
 	var buf bytes.Buffer
 	buf.WriteString("[")

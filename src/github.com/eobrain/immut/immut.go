@@ -1,5 +1,5 @@
 // The immut package contains immutable structure-sharing collections
-// in the style of Scala or Clojure.
+// for Go in the style of Scala or Clojure.
 package immut
 
 import (
@@ -46,7 +46,7 @@ type Seq interface {
 	// Each Apply the function to each item in the seq. O(n)
 	Each(func(Item))
 
-	// Join writes a concatentaion of the string representations
+	// Join writes a concatenation of the string representations
 	// of the items separated by sep into the Writer. O(n)
 	Join(string, *bytes.Buffer)
 
@@ -104,6 +104,7 @@ func Nth(xs Seq, n uint) (Item, error) {
 	return Nth(rest, n-1)
 }
 
+// Return the last item in the sequence. O(n) or O(n^3 * log(n))
 func Back(xs Seq) (Item, error) {
 	rest, err := xs.Rest()
 	if err != nil {
@@ -115,6 +116,8 @@ func Back(xs Seq) (Item, error) {
 	return Back(rest)
 }
 
+// Return a string formed by concatenation of the string
+// representations of the items separated by sep. O(n)
 func Join(xs Seq, sep string) string {
 	var buf bytes.Buffer
 	xs.Join(sep, &buf)
