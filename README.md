@@ -32,9 +32,12 @@ func Back(xs Seq) (Item, error)
 
 
 func Nth(xs Seq, n uint) (Item, error)
+    Return item number n in sequence, where immut.Nth(xs,0) is the same as
+    xs.Front() and immut.Nth(xs,1) is the same as immut.Second(xs)
 
 
 func Second(xs Seq) (Item, error)
+    Return second item in sequence.
 
 
 
@@ -97,7 +100,7 @@ func List(item ...Item) Seq
 
 func Remove(xs Seq, x Item) Seq
     Return sequence resulting from removing the item, or the sequence itself
-    if item not contained in it
+    if item not contained in it.
 
 
 func Set(item ...Item) Seq

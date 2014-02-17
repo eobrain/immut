@@ -77,11 +77,12 @@ type Seq interface {
 }
 
 // Return sequence resulting from removing the item, or the sequence
-// itself if item not contained in it
+// itself if item not contained in it.
 func Remove(xs Seq, x Item) Seq {
 	return xs.Filter(func(y Item) bool { return y != x })
 }
 
+// Return second item in sequence.
 func Second(xs Seq) (Item, error) {
 	rest, err := xs.Rest()
 	if err != nil {
@@ -90,6 +91,8 @@ func Second(xs Seq) (Item, error) {
 	return rest.Front()
 }
 
+// Return item number n in sequence, where immut.Nth(xs,0) is the same
+// as xs.Front() and immut.Nth(xs,1) is the same as immut.Second(xs)
 func Nth(xs Seq, n uint) (Item, error) {
 	if n == 0 {
 		return xs.Front()

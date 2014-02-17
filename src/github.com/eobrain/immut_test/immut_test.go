@@ -15,29 +15,14 @@ package test
 // limitations under the License.
 
 import (
-	"bytes"
 	"fmt"
 	"testing"
 
 	"github.com/eobrain/immut"
 )
 
-var empty = immut.List()
-var ints = immut.List(1, 2, 3)
-var strings = immut.List("one", "two", "three", "four")
-
 func p(x ...interface{}) {
 	fmt.Println(x...)
-}
-
-func ExampleString() {
-	p(empty)
-	p(ints)
-	p(strings)
-	// Output:
-	// <nil>
-	// [1,2,3]
-	// [one,two,three,four]
 }
 
 func ExampleRemove() {
@@ -62,156 +47,44 @@ func ExampleRemove() {
 	// [one,two,three]
 }
 
-func ExampleIsEmpty() {
-	p(empty.IsEmpty())
-	p(ints.IsEmpty())
-	// Output:
-	// true
-	// false
+func str(xs immut.Item, err error) string {
+	return fmt.Sprintf("%v,%v", xs, err)
 }
 
-func ExampleLen() {
-	p(empty.Len())
-	p(ints.Len())
-	p(strings.Len())
-	// Output:
-	// 0
-	// 3
-	// 4
-}
-
-func ExampleFront() {
-
-	p(strings.Front())
-	p(ints.Front())
-	p(empty.Front())
-
-	// Output:
-	// one <nil>
-	// 1 <nil>
-	// <nil> getting Front of empty seq
-}
-
-func ExampleAddAll() {
-	p(ints.AddAll(strings))
-	// Output:
-	// [1,2,3,one,two,three,four]
-}
-
-func ExampleAdd() {
-	p(strings.AddFront("zero"))
-	p(strings.AddBack("five"))
-	// Output:
-	// [zero,one,two,three,four]
-	// [one,two,three,four,five]
-
-}
-
-func ExampleEach() {
-	ints.Each(func(item immut.Item) {
-		i := item.(int)
-		p(i * i)
-	})
-	// Output:
-	// 1
-	// 4
-	// 9
-}
-
-func x8192(x immut.Seq) (result immut.Seq) {
-	x2 := x.AddAll(x)
-	x4 := x2.AddAll(x2)
-	x8 := x4.AddAll(x4)
-	x16 := x8.AddAll(x8)
-	x32 := x16.AddAll(x16)
-	x64 := x32.AddAll(x32)
-	x128 := x64.AddAll(x64)
-	x256 := x128.AddAll(x128)
-	x512 := x256.AddAll(x256)
-	x1024 := x512.AddAll(x512)
-	x2048 := x1024.AddAll(x1024)
-	x4096 := x2048.AddAll(x2048)
-	result = x4096.AddAll(x4096)
-	return
-}
-
-func ExampleBig() {
-	big := x8192(immut.List("foo"))
-	p(big.Len())
-	// Output:
-	// 8192
-}
-
-/*
-func TestVeryBig(t *testing.T) {
-	big := x8192(immut.List("foo"))
-	vBig := x8192(big)
-	if vBig.Len() != 8192*8192 {
-		t.FailNow()
+func TestNth(t *testing.T) {
+	seqs := []immut.Seq{
+		empty,
+		ints,
+		strings,
+		x8192(immut.List("foo")),
+		immut.List(19, "yellow", true),
+		immut.List(2, 4, 7),
+		immut.List(2, 4),
+		immut.List(2),
+		immut.List("Moe", "Larry", "Curly", "Shemp"),
+		emptySet,
+		intsSet,
+		stringsSet,
+		immut.Set(2, 4, 3, 1),
+		intsSet.AddAll(stringsSet),
+		immut.Set("X", "Y", "Z").AddAll(immut.Set("a", "b", "c", "d", "e", "f", "g", "h")),
+		immut.Set(1, 2),
+		immut.Set(1),
+	}
+	for i, xs := range seqs {
+		if a, b := str(immut.Nth(xs, 0)), str(xs.Front()); a != b {
+			t.Errorf("%d: %s != %s", i, a, b)
+		}
+		if a, b := str(immut.Nth(xs, 1)), str(immut.Second(xs)); a != b {
+			t.Errorf("%d: %s != %s", i, a, b)
+		}
 	}
 }
-*/
 
 func BenchmarkNilIsEmpty(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		empty.IsEmpty()
 	}
-}
-func BenchmarkIntsIsEmpty(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		ints.IsEmpty()
-	}
-}
-
-func ExampleJoin() {
-	var buf bytes.Buffer
-	strings.Join("|", &buf)
-	buf.WriteString("\n")
-	ints.Join(" <--> ", &buf)
-	p(buf.String())
-	// Output:
-	// one|two|three|four
-	// 1 <--> 2 <--> 3
-}
-
-func ExampleMap() {
-	p(ints.Map(func(item immut.Item) immut.Item {
-		i := item.(int)
-		return i * i
-	}))
-	// Output:
-	// [1,4,9]
-}
-
-func ExampleFilter() {
-	p(ints.Filter(func(item immut.Item) bool {
-		i := item.(int)
-		return i%2 == 1
-	}))
-	// Output:
-	// [1,3]
-}
-
-// For below see http://java.ociweb.com/mark/clojure/article.html
-
-func ExampleCount() {
-	p(immut.List(19, "yellow", true).Len())
-	// Output:
-	// 3
-}
-
-func ExampleReverse() {
-	p(immut.List(2, 4, 7).Reverse())
-	// Output:
-	// [7,4,2]
-}
-
-func ExampleMap2() {
-	p(immut.List(2, 4, 7).Map(func(x immut.Item) immut.Item {
-		return x.(int) + 3
-	}))
-	// Output:
-	// [5,7,10]
 }
 
 func ExampleNth() {
