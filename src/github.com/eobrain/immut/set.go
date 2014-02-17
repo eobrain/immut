@@ -15,22 +15,13 @@ package immut
 // limitations under the License.
 
 import (
+	"bytes"
 	"fmt"
-	//"log"
 )
 
 // Note, no attempt to keep this binary tree balanced
 
-//recursively build a binary tree
-func (xs tree) buildTreeFrom(remaining []Item) tree {
-	if len(remaining) == 0 {
-		return xs
-	}
-	x := remaining[0]
-	return xs.addTreeNode(x, s(x)).buildTreeFrom(remaining[1:])
-}
-
-// Create a new set containing the arguments
+// Create a new ordered set containing the arguments. O(n*log(n))
 func Set(item ...Item) Seq {
 	if len(item) == 0 {
 		return null{}
@@ -41,6 +32,15 @@ func Set(item ...Item) Seq {
 }
 
 // Everything below here is private
+
+// Recursively build a binary tree. O(n*log(n))
+func (xs tree) buildTreeFrom(remaining []Item) tree {
+	if len(remaining) == 0 {
+		return xs
+	}
+	x := remaining[0]
+	return xs.addTreeNode(x, s(x)).buildTreeFrom(remaining[1:])
+}
 
 type tree struct {
 	value  Item
@@ -71,15 +71,14 @@ func (xs tree) Front() (Item, error) {
 	return xs.left.Front()
 }
 
+// O(n^2 * log(n))
 func (xs tree) Rest() (Seq, error) {
-	//log.Printf("%v.Rest()\n", xs)
 	if xs.left.IsEmpty() {
-		//log.Printf("%v returning right %v", xs, xs.right)
 		return xs.right, nil
 	}
 	// Perhaps not most efficient
 	leftRest, _ := xs.left.Rest() // guaranteed not empty
-	return leftRest.Add(xs.value).AddAll(xs.right), nil
+	return leftRest.AddFront(xs.value).AddAll(xs.right), nil
 }
 
 func (xs tree) IsEmpty() bool {
@@ -92,7 +91,25 @@ func (xs tree) Each(f func(Item)) {
 	f(xs.value)
 	xs.right.Each(f)
 }
-func (xs tree) Join(sep string) string {
+
+func (xs tree) Join(sep string, buf *bytes.Buffer) {
+	if !xs.left.IsEmpty() {
+		xs.left.Join(sep, buf)
+		buf.WriteString(sep)
+	}
+	buf.WriteString(xs.valueS)
+	if !xs.right.IsEmpty() {
+		buf.WriteString(sep)
+		xs.right.Join(sep, buf)
+	}
+}
+
+//func (xs tree) Join(sep string) string {
+//	var buf bytes.Buffer
+//	xs.join(sep, &buf)
+//	return buffer.String()
+
+/*
 	//TODO: make more efficient http://stackoverflow.com/a/1766304/978525
 	if xs.left.IsEmpty() {
 		if xs.right.IsEmpty() {
@@ -106,9 +123,10 @@ func (xs tree) Join(sep string) string {
 	return xs.left.Join(sep) + sep +
 		xs.valueS + sep +
 		xs.right.Join(sep)
+*/
+//}
 
-}
-
+/// O(log n)
 func (xs tree) addTreeNode(x Item, itemS string) tree {
 	if x == xs.value {
 		//set semantics -- cannnot have more than one of any value
@@ -129,11 +147,22 @@ func (xs tree) addTreeNode(x Item, itemS string) tree {
 		xs.right.addTreeNode(x, itemS)}
 }
 
-func (xs tree) Add(x Item) Seq {
+// Cannot reverse a sorted set, so just return the set itself
+func (xs tree) Reverse() Seq {
+	return xs
+}
+
+// O(log n)
+func (xs tree) AddFront(x Item) Seq {
 	//log.Printf("%v.Add(%v)\n", xs, x)
 	return xs.addTreeNode(x, s(x))
 }
 
+func (xs tree) AddBack(x Item) Seq {
+	return xs.AddFront(x) // same
+}
+
+// O(n*log(n))
 func (xs tree) AddAll(that Seq) Seq {
 	//fmt.Printf("[%d].AddAll([%d])\n", xs.Len(), that.Len())
 	first, err := that.Front()
@@ -142,7 +171,7 @@ func (xs tree) AddAll(that Seq) Seq {
 		return xs
 	}
 	rest, _ := that.Rest() //error guaranteed to be non null TODO: add tests for Rest
-	return xs.Add(first).AddAll(rest)
+	return xs.AddFront(first).AddAll(rest)
 	//TODO, avoid xs creating very unbalanced trees
 }
 
@@ -187,7 +216,11 @@ func (xs tree) Filter(f func(Item) bool) Seq {
 	return xs.left.Filter(f).AddAll(xs.right.Filter(f))
 }
 func (xs tree) String() string {
-	return "[" + xs.Join(",") + "]"
+	var buf bytes.Buffer
+	buf.WriteString("{")
+	xs.Join(",", &buf)
+	buf.WriteString("}")
+	return buf.String()
 }
 
 //func (xs tree) String() string {

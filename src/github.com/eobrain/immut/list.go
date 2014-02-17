@@ -14,7 +14,10 @@ package immut
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+)
 
 // Create a new list containing the arguments
 func List(item ...Item) Seq {
@@ -56,28 +59,28 @@ func (xs cons) Each(f func(Item)) {
 	f(xs.first)
 	xs.rest.Each(f) //recursion
 }
-func (xs cons) Join(sep string) string {
-	if xs.rest.IsEmpty() {
-		return fmt.Sprintf("%v", xs.first)
+
+// O(n)
+func (xs cons) Join(sep string, buf *bytes.Buffer) {
+	buf.WriteString(fmt.Sprintf("%v", xs.first))
+	if !xs.rest.IsEmpty() {
+		buf.WriteString(sep)
+		xs.rest.Join(sep, buf)
 	}
-	return fmt.Sprintf("%v%s%s",
-		xs.first,
-		sep,
-		xs.rest.Join(sep))
 }
 
-//func (xs cons) Reverse() Seq {
-//	return xs.rest.Reverse().Add(xs.first)
-//}
+func (xs cons) Reverse() Seq {
+	return xs.rest.Reverse().AddBack(xs.first)
+}
 
 // Add to beginning
-func (xs cons) Add(x Item) Seq {
+func (xs cons) AddFront(x Item) Seq {
 	return cons{x, xs}
 }
 
-/*func (xs cons) AddLast(x Item) Seq {
-	return cons{xs.first, xs.rest.Add(x)}
-}*/
+func (xs cons) AddBack(x Item) Seq {
+	return cons{xs.first, xs.rest.AddBack(x)}
+}
 
 func (xs cons) AddAll(that Seq) Seq {
 	//fmt.Printf("[%d].AddAll([%d])\n", xs.Len(), that.Len())
@@ -99,7 +102,11 @@ func (xs cons) Filter(f func(Item) bool) Seq {
 	return xs.rest.Filter(f)
 }
 func (xs cons) String() string {
-	return "[" + xs.Join(",") + "]"
+	var buf bytes.Buffer
+	buf.WriteString("[")
+	xs.Join(",", &buf)
+	buf.WriteString("]")
+	return buf.String()
 }
 
 func (xs cons) addTreeNode(x Item, itemS string) tree {

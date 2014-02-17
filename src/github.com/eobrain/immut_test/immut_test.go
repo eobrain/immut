@@ -15,6 +15,7 @@ package test
 // limitations under the License.
 
 import (
+	"bytes"
 	"fmt"
 	"testing"
 
@@ -34,7 +35,7 @@ func ExampleString() {
 	p(ints)
 	p(strings)
 	// Output:
-	// []
+	// <nil>
 	// [1,2,3]
 	// [one,two,three,four]
 }
@@ -50,7 +51,7 @@ func ExampleRemove() {
 	p(immut.Remove(strings, "two"))
 	p(immut.Remove(strings, "four"))
 	// Output:
-	// []
+	// <nil>
 	// [1,2,3]
 	// [1,2,3]
 	// [2,3]
@@ -98,9 +99,11 @@ func ExampleAddAll() {
 }
 
 func ExampleAdd() {
-	p(strings.Add("zero"))
+	p(strings.AddFront("zero"))
+	p(strings.AddBack("five"))
 	// Output:
 	// [zero,one,two,three,four]
+	// [one,two,three,four,five]
 
 }
 
@@ -114,12 +117,6 @@ func ExampleEach() {
 	// 4
 	// 9
 }
-
-/*func ExampleReverse() {
-	p(strings.Reverse())
-	// Output:
-	// [four,three,two,one]
-}*/
 
 func x8192(x immut.Seq) (result immut.Seq) {
 	x2 := x.AddAll(x)
@@ -167,8 +164,11 @@ func BenchmarkIntsIsEmpty(b *testing.B) {
 }
 
 func ExampleJoin() {
-	p(strings.Join("|"))
-	p(ints.Join(" <--> "))
+	var buf bytes.Buffer
+	strings.Join("|", &buf)
+	buf.WriteString("\n")
+	ints.Join(" <--> ", &buf)
+	p(buf.String())
 	// Output:
 	// one|two|three|four
 	// 1 <--> 2 <--> 3
@@ -190,4 +190,39 @@ func ExampleFilter() {
 	}))
 	// Output:
 	// [1,3]
+}
+
+// For below see http://java.ociweb.com/mark/clojure/article.html
+
+func ExampleCount() {
+	p(immut.List(19, "yellow", true).Len())
+	// Output:
+	// 3
+}
+
+func ExampleReverse() {
+	p(immut.List(2, 4, 7).Reverse())
+	// Output:
+	// [7,4,2]
+}
+
+func ExampleMap2() {
+	p(immut.List(2, 4, 7).Map(func(x immut.Item) immut.Item {
+		return x.(int) + 3
+	}))
+	// Output:
+	// [5,7,10]
+}
+
+func ExampleNth() {
+	stooges := immut.List("Moe", "Larry", "Curly", "Shemp")
+	p(stooges.Front())
+	p(immut.Second(stooges))
+	p(immut.Back(stooges))
+	p(immut.Nth(stooges, 2))
+	// Output:
+	// Moe <nil>
+	// Larry <nil>
+	// Shemp <nil>
+	// Curly <nil>
 }

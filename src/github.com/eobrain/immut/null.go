@@ -15,14 +15,14 @@ package immut
 // limitations under the License.
 
 import (
+	"bytes"
 	"errors"
-	//"log"
 )
 
 type null struct{}
 
 func (null) String() string {
-	return "[]"
+	return "<nil>"
 }
 
 func (null) Len() int {
@@ -51,15 +51,19 @@ func (null) Each(f func(Item)) {
 	//do nothing
 }
 
-func (null) Join(string) string {
-	return ""
+func (null) Join(string, *bytes.Buffer) {
+	// do nothing
 }
 
-//func (this null) Reverse() Seq {
-//	return this
-//}
+func (this null) Reverse() Seq {
+	return this
+}
 
-func (this null) Add(item Item) Seq {
+func (this null) AddFront(item Item) Seq {
+	return cons{item, this}
+}
+
+func (this null) AddBack(item Item) Seq {
 	return cons{item, this}
 }
 

@@ -15,6 +15,7 @@ package test
 // limitations under the License.
 
 import (
+	"bytes"
 	"log"
 	"math/rand"
 	"testing"
@@ -32,10 +33,10 @@ func ExampleSetString() {
 	p(stringsSet)
 	p(immut.Set(2, 4, 3, 1))
 	// Output:
-	// []
-	// [1,2,3]
-	// [four,one,three,two]
-	// [1,2,3,4]
+	// <nil>
+	// {1,2,3}
+	// {four,one,three,two}
+	// {1,2,3,4}
 }
 
 func ExampleSetRemove() {
@@ -52,18 +53,18 @@ func ExampleSetRemove() {
 	p(immut.Remove(immut.Set(2, 4, 3, 1), 4))
 	p(immut.Remove(immut.Set(2, 4, 3, 1), 1))
 	// Output:
-	// []
-	// [1,2,3]
-	// [1,2,3]
-	// [2,3]
-	// [1,3]
-	// [1,2]
-	// [four,one,three,two] - one  = [four,three,two]
-	// [four,one,three,two] - two  = [four,one,three]
-	// [four,one,three,two] - four = [one,three,two]
-	// [1,3,4]
-	// [1,2,3]
-	// [2,3,4]
+	// <nil>
+	// {1,2,3}
+	// {1,2,3}
+	// {2,3}
+	// {1,3}
+	// {1,2}
+	// {four,one,three,two} - one  = {four,three,two}
+	// {four,one,three,two} - two  = {four,one,three}
+	// {four,one,three,two} - four = {one,three,two}
+	// {1,3,4}
+	// {1,2,3}
+	// {2,3,4}
 }
 
 func ExampleSetIsEmpty() {
@@ -108,57 +109,59 @@ func ExampleSetAddAll() {
 	p(immut.Set("a", "b", "c", "d", "e", "f", "g", "h").AddAll(immut.Set("X", "Y", "Z")))
 	p(immut.Set("X", "Y", "Z").AddAll(immut.Set("a", "b", "c", "d", "e", "f", "g", "h")))
 	// Output:
-	// [1,2,3,four,one,three,two]
-	// [1,2,3,four,one,three,two]
-	// [X,a,b,c,d,e,f,g,h]
-	// [X,a,b,c,d,e,f,g,h]
-	// [X,Y,a,b,c,d,e,f,g,h]
-	// [X,Y,a,b,c,d,e,f,g,h]
-	// [X,Y,a,b,c,d,e,f,g,h]
-	// [X,Y,a,b,c,d,e,f,g,h]
-	// [X,Y,Z,a,b,c,d,e,f,g,h]
-	// [X,Y,Z,a,b,c,d,e,f,g,h]
+	// {1,2,3,four,one,three,two}
+	// {1,2,3,four,one,three,two}
+	// {X,a,b,c,d,e,f,g,h}
+	// {X,a,b,c,d,e,f,g,h}
+	// {X,Y,a,b,c,d,e,f,g,h}
+	// {X,Y,a,b,c,d,e,f,g,h}
+	// {X,Y,a,b,c,d,e,f,g,h}
+	// {X,Y,a,b,c,d,e,f,g,h}
+	// {X,Y,Z,a,b,c,d,e,f,g,h}
+	// {X,Y,Z,a,b,c,d,e,f,g,h}
 }
 
 func ExampleSetAdd() {
-	p(stringsSet.Add("zero"))
+	p(stringsSet.AddFront("zero"))
+	p(stringsSet.AddBack("zero"))
 	// Output:
-	// [four,one,three,two,zero]
+	// {four,one,three,two,zero}
+	// {four,one,three,two,zero}
 
 }
 
 func ExampleSetAddAnyOrder() {
-	p(immut.Set(1).Add(2))
-	p(immut.Set(2).Add(1))
-	p(immut.Set("aaa").Add("bbb"))
-	p(immut.Set("bbb").Add("aaa"))
+	p(immut.Set(1).AddFront(2))
+	p(immut.Set(2).AddFront(1))
+	p(immut.Set("aaa").AddFront("bbb"))
+	p(immut.Set("bbb").AddFront("aaa"))
 	// Output:
-	// [1,2]
-	// [1,2]
-	// [aaa,bbb]
-	// [aaa,bbb]
+	// {1,2}
+	// {1,2}
+	// {aaa,bbb}
+	// {aaa,bbb}
 }
 
 func ExampleSetInitAnyOrder() {
 	p(immut.Set(1, 2))
 	p(immut.Set(2, 1))
 	// Output:
-	// [1,2]
-	// [1,2]
+	// {1,2}
+	// {1,2}
 }
 
 func ExampleSetisSet() {
-	p(intsSet.Add(1))
-	p(intsSet.Add(2))
-	p(intsSet.Add(3))
-	p(intsSet.Add(0))
-	p(intsSet.Add(4))
+	p(intsSet.AddFront(1))
+	p(intsSet.AddFront(2))
+	p(intsSet.AddFront(3))
+	p(intsSet.AddFront(0))
+	p(intsSet.AddFront(4))
 	// Output:
-	// [1,2,3]
-	// [1,2,3]
-	// [1,2,3]
-	// [0,1,2,3]
-	// [1,2,3,4]
+	// {1,2,3}
+	// {1,2,3}
+	// {1,2,3}
+	// {0,1,2,3}
+	// {1,2,3,4}
 }
 
 func ExampleSetEach() {
@@ -185,7 +188,7 @@ func random(n int) immut.Seq {
 	if n == 0 {
 		return immut.Set()
 	}
-	return random(n - 1).Add(r.Float64())
+	return random(n - 1).AddFront(r.Float64())
 }
 
 func ExampleSetBig() {
@@ -218,8 +221,11 @@ func BenchmarkSetIntsSetIsEmpty(b *testing.B) {
 }
 
 func ExampleSetJoin() {
-	p(stringsSet.Join("|"))
-	p(intsSet.Join(" <--> "))
+	var buf bytes.Buffer
+	stringsSet.Join("|", &buf)
+	buf.WriteString("\n")
+	intsSet.Join(" <--> ", &buf)
+	p(buf.String())
 	// Output:
 	// four|one|three|two
 	// 1 <--> 2 <--> 3
@@ -231,7 +237,7 @@ func ExampleSetMap() {
 		return i * i
 	}))
 	// Output:
-	// [1,4,9]
+	// {1,4,9}
 }
 
 func ExampleSetFilter() {
@@ -240,11 +246,11 @@ func ExampleSetFilter() {
 		return i%2 == 1
 	}))
 	// Output:
-	// [1,3]
+	// {1,3}
 }
 
+// TODO(eob) Figure out why we are getting lists rather than sets.
 func ExampleRest() {
-
 	p(intsSet.Rest())
 	p(stringsSet.Rest())
 	p(emptySet.Rest())
