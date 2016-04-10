@@ -93,7 +93,7 @@ func Second(xs Seq) (Item, error) {
 
 // Return item number n in sequence, where immut.Nth(xs,0) is the same
 // as xs.Front() and immut.Nth(xs,1) is the same as immut.Second(xs)
-func Nth(xs Seq, n uint) (Item, error) {
+func Nth(xs Seq, n int) (Item, error) {
 	if n == 0 {
 		return xs.Front()
 	}

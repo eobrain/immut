@@ -97,6 +97,12 @@ func ExampleSetFirst() {
 	// <nil> getting Front of empty seq
 }
 
+func BenchmarkSetFront(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		intsSet.Front()
+	}
+}
+
 func ExampleSetAddAll() {
 	p(intsSet.AddAll(stringsSet))
 	p(stringsSet.AddAll(intsSet))
@@ -214,7 +220,7 @@ func BenchmarkSetNilIsEmpty(b *testing.B) {
 		emptySet.IsEmpty()
 	}
 }
-func BenchmarkSetIntsSetIsEmpty(b *testing.B) {
+func BenchmarkSetIsEmpty(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		intsSet.IsEmpty()
 	}

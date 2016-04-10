@@ -27,5 +27,5 @@ README.md: src/github.com/eobrain/immut/*.go bin/godoc2md.awk
 test:
 	$(ENV) go test github.com/eobrain/immut_test
 
-
-
+bench:
+	$(ENV) go test --bench=. --benchmem --benchtime=0.01s github.com/eobrain/immut_test

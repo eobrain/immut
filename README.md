@@ -1,5 +1,7 @@
 ````go
 
+use 'godoc cmd/github.com/eobrain/immut' for documentation on the github.com/eobrain/immut command 
+
 PACKAGE DOCUMENTATION
 
 package immut
@@ -7,7 +9,6 @@ package immut
 
     The immut package contains immutable structure-sharing collections for
     Go in the style of Scala or Clojure.
-
 
 ````
 
@@ -19,7 +20,6 @@ func Join(xs Seq, sep string) string
     Return a string formed by concatenation of the string representations of
     the items separated by sep. O(n)
 
-
 ````
 
 TYPES
@@ -29,20 +29,15 @@ TYPES
 type Item interface{}
     An Item is an element in a Seq.
 
-
 func Back(xs Seq) (Item, error)
     Return the last item in the sequence. O(n) or O(n^3 * log(n))
 
-
-func Nth(xs Seq, n uint) (Item, error)
+func Nth(xs Seq, n int) (Item, error)
     Return item number n in sequence, where immut.Nth(xs,0) is the same as
     xs.Front() and immut.Nth(xs,1) is the same as immut.Second(xs)
 
-
 func Second(xs Seq) (Item, error)
     Return second item in sequence.
-
-
 
 type Seq interface {
 
@@ -96,20 +91,18 @@ type Seq interface {
     first is for list, second is for set (average case, assuming it is a
     balanced tree),
 
-
 func List(item ...Item) Seq
     Create a new list containing the arguments.
-
 
 func Remove(xs Seq, x Item) Seq
     Return sequence resulting from removing the item, or the sequence itself
     if item not contained in it.
 
-
 func Set(item ...Item) Seq
     Create a new ordered set containing the arguments. O(n*log(n))
 
-
+func Slice(item ...Item) Seq
+    Create a new list containing the arguments.
 
 
 ````
