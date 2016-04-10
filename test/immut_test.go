@@ -28,50 +28,6 @@ func p(x ...interface{}) {
 	fmt.Println(x...)
 }
 
-func ExampleRemove() {
-	p(immut.Remove(empty, 33))
-	p(immut.Remove(ints, 33))
-	p(immut.Remove(ints, "foo"))
-	p(immut.Remove(ints, 1))
-	p(immut.Remove(ints, 2))
-	p(immut.Remove(ints, 3))
-	p(immut.Remove(strings, "one"))
-	p(immut.Remove(strings, "two"))
-	p(immut.Remove(strings, "four"))
-	// Output:
-	// <nil>
-	// [1,2,3]
-	// [1,2,3]
-	// [2,3]
-	// [1,3]
-	// [1,2]
-	// [two,three,four]
-	// [one,three,four]
-	// [one,two,three]
-}
-
-func ExampleRemoveA() {
-	p(immut.Remove(emptyA, 33))
-	p(immut.Remove(intsA, 33))
-	p(immut.Remove(intsA, "foo"))
-	p(immut.Remove(intsA, 1))
-	p(immut.Remove(intsA, 2))
-	p(immut.Remove(intsA, 3))
-	p(immut.Remove(stringsA, "one"))
-	p(immut.Remove(stringsA, "two"))
-	p(immut.Remove(stringsA, "four"))
-	// Output:
-	// <nil>
-	// [1,2,3]
-	// [1,2,3]
-	// [2,3]
-	// [1,3]
-	// [1,2]
-	// [two,three,four]
-	// [one,three,four]
-	// [one,two,three]
-}
-
 func BenchmarkListRemove(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		immut.Remove(ints, 2)
@@ -179,32 +135,6 @@ func BenchmarkNilIsEmpty(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		empty.IsEmpty()
 	}
-}
-
-func ExampleNth() {
-	stooges := list.New("Moe", "Larry", "Curly", "Shemp")
-	p(stooges.Front())
-	p(immut.Second(stooges))
-	p(immut.Back(stooges))
-	p(immut.Nth(stooges, 2))
-	// Output:
-	// Moe <nil>
-	// Larry <nil>
-	// Shemp <nil>
-	// Curly <nil>
-}
-
-func ExampleNthA() {
-	stooges := slice.New("Moe", "Larry", "Curly", "Shemp")
-	p(stooges.Front())
-	p(immut.Second(stooges))
-	p(immut.Back(stooges))
-	p(immut.Nth(stooges, 2))
-	// Output:
-	// Moe <nil>
-	// Larry <nil>
-	// Shemp <nil>
-	// Curly <nil>
 }
 
 // Returns the frst two elements of the integer data vector that sum

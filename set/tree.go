@@ -272,7 +272,7 @@ func (xs *Tree) String() string {
 	buf.WriteString("}")
 	return buf.String()
 }
-func (Empty) String() string { return "<nil>" }
+func (Empty) String() string { return "{}" }
 
 func (xs *Tree) Items() (ys []interface{}) {
 	ys = make([]interface{}, xs.Len())

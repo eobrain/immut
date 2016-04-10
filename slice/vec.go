@@ -174,7 +174,7 @@ func (xs slice) String() string {
 	buf.WriteString("]")
 	return buf.String()
 }
-func (empty) String() string { return "<nil>" }
+func (empty) String() string { return "[]" }
 
 func (xs slice) Items() (ys []interface{}) {
 	ys = make([]interface{}, xs.Len())
