@@ -20,37 +20,35 @@ import (
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// A Seq is an immutable sequence of items.  Where multiple O(...)
-// given, first is for list, second is for set (average case, assuming
-// it is a balanced tree),
+// A Seq is an immutable sequence of items.
 type Seq interface {
 
-	// Len is the number of elements. O(n) or O(log n)
+	// Len is the number of elements.
 	Len() int
 
-	// Contains is whether the item is in the Seq. O(n) or O(log n)
+	// Contains is whether the item is in the Seq.
 	Contains(interface{}) bool
 
-	// Front returns the first item. O(1) or O(log n)
+	// Front returns the first item.
 	Front() (interface{}, error)
 
-	// Rest returns new list with all except the first item. O(1) or  O(n^2 * log(n))
+	// Rest returns new list with all except the first item.
 	Rest() (Seq, error)
 
-	// IsEmpty is whether this is the empty seq. O(1)
+	// IsEmpty is whether this is the empty seq.
 	IsEmpty() bool
 
-	// Each Apply the function to each item in the seq. O(n)
+	// Each Apply the function to each item in the seq.
 	Each(func(interface{}))
 
 	// Join writes a concatenation of the string representations
-	// of the items separated by sep into the Writer. O(n)
+	// of the items separated by sep into the Writer.
 	Join(string, *bytes.Buffer)
 
-	// AddFront returns a new seq with the item added on to the beginning. O(1) or O(log n)
+	// AddFront returns a new seq with the item added on to the beginning.
 	AddFront(interface{}) Seq
 
-	//O(n) or O(1) return a new seq with the item added on to the end
+	// return a new seq with the item added on to the end
 	AddBack(interface{}) Seq
 
 	//return a new seq that is a concatenation of this seq with the given one

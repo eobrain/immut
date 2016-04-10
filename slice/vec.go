@@ -33,11 +33,13 @@ func New(item ...interface{}) immut.Seq {
 type slice []interface{}
 type empty struct{}
 
+// O(1)
 func (xs slice) Len() int {
 	return len(xs)
 }
 func (empty) Len() int { return 0 }
 
+// O(n)
 func (xs slice) Contains(x interface{}) bool {
 	for _, xx := range xs {
 		if xx == x {
@@ -48,6 +50,7 @@ func (xs slice) Contains(x interface{}) bool {
 }
 func (empty) Contains(interface{}) bool { return false }
 
+// O(1)
 func (xs slice) Front() (interface{}, error) {
 	return xs[0], nil
 }
@@ -65,9 +68,11 @@ func (empty) Rest() (immut.Seq, error) {
 	return nil, fmt.Errorf("getting Rest of empty seq")
 }
 
+// O(1)
 func (slice) IsEmpty() bool { return false }
 func (empty) IsEmpty() bool { return true }
 
+// O(n)
 func (xs slice) Each(f func(interface{})) {
 	for _, x := range xs {
 		f(x)
@@ -95,7 +100,6 @@ func (xs slice) Reverse() immut.Seq {
 }
 func (n empty) Reverse() immut.Seq { return n }
 
-// Add to beginning
 func (xs slice) AddFront(x interface{}) immut.Seq {
 	n := len(xs)
 	ys := make(slice, n+1)

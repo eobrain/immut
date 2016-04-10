@@ -45,12 +45,14 @@ func (xs *cons) check() {
 	}
 }
 
+// O(n)
 func (xs *cons) Len() int {
 	xs.check()
 	return 1 + xs.rest.Len()
 }
 func (empty) Len() int { return 0 }
 
+// O(n)
 func (xs *cons) Contains(x interface{}) bool {
 	xs.check()
 	return xs.first == x || xs.rest.Contains(x)
@@ -58,6 +60,7 @@ func (xs *cons) Contains(x interface{}) bool {
 }
 func (empty) Contains(interface{}) bool { return false }
 
+// O(1)
 func (xs *cons) Front() (interface{}, error) {
 	xs.check()
 	return xs.first, nil
@@ -66,6 +69,7 @@ func (empty) Front() (interface{}, error) {
 	return nil, fmt.Errorf("getting Front of empty seq")
 }
 
+// O(1)
 func (xs *cons) Rest() (immut.Seq, error) {
 	xs.check()
 	return xs.rest, nil
@@ -74,12 +78,14 @@ func (empty) Rest() (immut.Seq, error) {
 	return nil, fmt.Errorf("getting Rest of empty seq")
 }
 
+// O(1)
 func (xs *cons) IsEmpty() bool {
 	xs.check()
 	return false
 }
 func (empty) IsEmpty() bool { return true }
 
+// O(n)
 func (xs *cons) Each(f func(interface{})) {
 	f(xs.first)
 	xs.rest.Each(f) //recursion
@@ -103,13 +109,14 @@ func (xs *cons) Reverse() immut.Seq {
 }
 func (n empty) Reverse() immut.Seq { return n }
 
-// Add to beginning
+// O(1)
 func (xs *cons) AddFront(x interface{}) immut.Seq {
 	xs.check()
 	return &cons{x, xs}
 }
 func (empty) AddFront(item interface{}) immut.Seq { return New(item) }
 
+// O(n)
 func (xs *cons) AddBack(x interface{}) immut.Seq {
 	xs.check()
 	return &cons{xs.first, xs.rest.AddBack(x)}

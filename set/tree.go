@@ -66,11 +66,13 @@ func s(x interface{}) string {
 	return fmt.Sprintf("%v", x)
 }
 
+// O(log n)
 func (xs *Tree) Len() int {
 	return 1 + xs.left.Len() + xs.right.Len()
 }
 func (Empty) Len() int { return 0 }
 
+// O(log n)
 func (xs *Tree) Contains(x interface{}) bool {
 	itemS := s(x) //inefficiently re-creating on every recursion
 	return x == xs.value ||
@@ -79,6 +81,7 @@ func (xs *Tree) Contains(x interface{}) bool {
 }
 func (Empty) Contains(interface{}) bool { return false }
 
+// O(log n)
 func (xs *Tree) Front() (interface{}, error) {
 	if xs.left.IsEmpty() {
 		return xs.value, nil
@@ -102,9 +105,11 @@ func (Empty) Rest() (immut.Seq, error) {
 	return nil, fmt.Errorf("getting Rest of empty seq")
 }
 
+// O(1)
 func (xs *Tree) IsEmpty() bool { return false }
 func (Empty) IsEmpty() bool    { return true }
 
+// O(n)
 func (xs *Tree) Each(f func(interface{})) {
 	xs.left.Each(f)
 	f(xs.value)
@@ -112,6 +117,7 @@ func (xs *Tree) Each(f func(interface{})) {
 }
 func (Empty) Each(f func(interface{})) {}
 
+// O(n)
 func (xs *Tree) Join(sep string, buf *bytes.Buffer) {
 	if !xs.left.IsEmpty() {
 		xs.left.Join(sep, buf)
@@ -196,6 +202,7 @@ func (xs *Tree) AddFront(x interface{}) immut.Seq {
 }
 func (Empty) AddFront(item interface{}) immut.Seq { return New(item) }
 
+// O(log n)
 func (xs *Tree) AddBack(x interface{}) immut.Seq {
 	return xs.AddFront(x) // same
 }
