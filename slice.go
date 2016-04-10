@@ -20,7 +20,7 @@ import (
 )
 
 // Create a new list containing the arguments.
-func Slice(item ...Item) Seq {
+func Slice(item ...interface{}) Seq {
 	if len(item) == 0 {
 		return null{}
 	}
@@ -29,13 +29,13 @@ func Slice(item ...Item) Seq {
 
 // Everything below here is private
 
-type slice []Item
+type slice []interface{}
 
 func (xs slice) Len() int {
 	return len(xs)
 }
 
-func (xs slice) Contains(x Item) bool {
+func (xs slice) Contains(x interface{}) bool {
 	for _, xx := range xs {
 		if xx == x {
 			return true
@@ -44,7 +44,7 @@ func (xs slice) Contains(x Item) bool {
 	return false
 }
 
-func (xs slice) Front() (Item, error) {
+func (xs slice) Front() (interface{}, error) {
 	return xs[0], nil
 }
 
@@ -59,7 +59,7 @@ func (slice) IsEmpty() bool {
 	return false
 }
 
-func (xs slice) Each(f func(Item)) {
+func (xs slice) Each(f func(interface{})) {
 	for _, x := range xs {
 		f(x)
 	}
@@ -84,7 +84,7 @@ func (xs slice) Reverse() Seq {
 }
 
 // Add to beginning
-func (xs slice) AddFront(x Item) Seq {
+func (xs slice) AddFront(x interface{}) Seq {
 	n := len(xs)
 	ys := make(slice, n+1)
 	ys[0] = x
@@ -92,7 +92,7 @@ func (xs slice) AddFront(x Item) Seq {
 	return ys
 }
 
-func (xs slice) AddBack(x Item) Seq {
+func (xs slice) AddBack(x interface{}) Seq {
 	n := len(xs)
 	ys := make(slice, n+1)
 	ys[n] = x
@@ -111,13 +111,13 @@ func (xs slice) AddAll(that Seq) Seq {
 		return ys
 	}
 	ys := make(slice, n)
-	that.Each(func(x Item) {
+	that.Each(func(x interface{}) {
 		ys = append(ys, x)
 	})
 	return ys
 }
 
-func (xs slice) Forall(f func(Item) bool) bool {
+func (xs slice) Forall(f func(interface{}) bool) bool {
 	for _, x := range xs {
 		if !f(x) {
 			return false
@@ -126,7 +126,7 @@ func (xs slice) Forall(f func(Item) bool) bool {
 	return true
 }
 
-func (xs slice) Map(f func(Item) Item) Seq {
+func (xs slice) Map(f func(interface{}) interface{}) Seq {
 	n := len(xs)
 	ys := make(slice, n)
 	for i := 0; i < n; i++ {
@@ -135,7 +135,7 @@ func (xs slice) Map(f func(Item) Item) Seq {
 	return ys
 }
 
-func (xs slice) Filter(f func(Item) bool) Seq {
+func (xs slice) Filter(f func(interface{}) bool) Seq {
 	ys := slice{}
 	for _, x := range xs {
 		if f(x) {
@@ -153,6 +153,6 @@ func (xs slice) String() string {
 	return buf.String()
 }
 
-func (xs slice) addTreeNode(x Item, itemS string) *tree {
+func (xs slice) addTreeNode(x interface{}, itemS string) *tree {
 	return null{}.addTreeNode(x, itemS)
 }

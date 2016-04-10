@@ -81,7 +81,7 @@ func BenchmarkListRemoveA(b *testing.B) {
 	}
 }
 
-func str(xs immut.Item, err error) string {
+func str(xs interface{}, err error) string {
 	return fmt.Sprintf("%v,%v", xs, err)
 }
 

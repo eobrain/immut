@@ -22,7 +22,7 @@ import (
 // Note, no attempt to keep this binary tree balanced
 
 // Create a new ordered set containing the arguments. O(n*log(n))
-func Set(item ...Item) Seq {
+func Set(item ...interface{}) Seq {
 	if len(item) == 0 {
 		return null{}
 	}
@@ -34,7 +34,7 @@ func Set(item ...Item) Seq {
 // Everything below here is private
 
 // Recursively build a binary tree. O(n*log(n))
-func (xs *tree) buildTreeFrom(remaining []Item) *tree {
+func (xs *tree) buildTreeFrom(remaining []interface{}) *tree {
 	if len(remaining) == 0 {
 		return xs
 	}
@@ -43,13 +43,13 @@ func (xs *tree) buildTreeFrom(remaining []Item) *tree {
 }
 
 type tree struct {
-	value  Item
+	value  interface{}
 	valueS string //hack: use string compare for ordering
 	left   Seq
 	right  Seq
 }
 
-func s(x Item) string {
+func s(x interface{}) string {
 	return fmt.Sprintf("%v", x)
 }
 
@@ -57,14 +57,14 @@ func (xs *tree) Len() int {
 	return 1 + xs.left.Len() + xs.right.Len()
 }
 
-func (xs *tree) Contains(x Item) bool {
+func (xs *tree) Contains(x interface{}) bool {
 	itemS := s(x) //inefficiently re-creating on every recursion
 	return x == xs.value ||
 		itemS < xs.valueS && xs.left.Contains(x) ||
 		xs.right.Contains(x)
 }
 
-func (xs *tree) Front() (Item, error) {
+func (xs *tree) Front() (interface{}, error) {
 	if xs.left.IsEmpty() {
 		return xs.value, nil
 	}
@@ -86,7 +86,7 @@ func (xs *tree) IsEmpty() bool {
 	return false
 }
 
-func (xs *tree) Each(f func(Item)) {
+func (xs *tree) Each(f func(interface{})) {
 	xs.left.Each(f)
 	f(xs.value)
 	xs.right.Each(f)
@@ -127,7 +127,7 @@ func (xs *tree) Join(sep string, buf *bytes.Buffer) {
 //}
 
 /// O(log n)
-func (xs *tree) addTreeNode(x Item, itemS string) *tree {
+func (xs *tree) addTreeNode(x interface{}, itemS string) *tree {
 	if x == xs.value {
 		//set semantics -- cannnot have more than one of any value
 		return xs
@@ -153,12 +153,12 @@ func (xs *tree) Reverse() Seq {
 }
 
 // O(log n)
-func (xs *tree) AddFront(x Item) Seq {
+func (xs *tree) AddFront(x interface{}) Seq {
 	//log.Printf("%v.Add(%v)\n", xs, x)
 	return xs.addTreeNode(x, s(x))
 }
 
-func (xs *tree) AddBack(x Item) Seq {
+func (xs *tree) AddBack(x interface{}) Seq {
 	return xs.AddFront(x) // same
 }
 
@@ -175,11 +175,11 @@ func (xs *tree) AddAll(that Seq) Seq {
 	//TODO, avoid xs creating very unbalanced trees
 }
 
-func (xs *tree) Forall(f func(Item) bool) bool {
+func (xs *tree) Forall(f func(interface{}) bool) bool {
 	return f(xs.value) && xs.left.Forall(f) && xs.right.Forall(f)
 }
 
-func (xs *tree) Map(f func(Item) Item) Seq {
+func (xs *tree) Map(f func(interface{}) interface{}) Seq {
 	mappedValue := f(xs.value)
 	mappedValueS := s(mappedValue)
 	return &tree{
@@ -190,7 +190,7 @@ func (xs *tree) Map(f func(Item) Item) Seq {
 
 }
 
-func (xs *tree) Filter(f func(Item) bool) Seq {
+func (xs *tree) Filter(f func(interface{}) bool) Seq {
 	if xs.Forall(f) {
 		return xs
 	}

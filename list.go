@@ -20,7 +20,7 @@ import (
 )
 
 // Create a new list containing the arguments.
-func List(item ...Item) Seq {
+func List(item ...interface{}) Seq {
 	if len(item) == 0 {
 		return null{}
 	}
@@ -30,7 +30,7 @@ func List(item ...Item) Seq {
 // Everything below here is private
 
 type cons struct {
-	first Item
+	first interface{}
 	rest  Seq
 }
 
@@ -38,12 +38,12 @@ func (xs *cons) Len() int {
 	return 1 + xs.rest.Len()
 }
 
-func (xs *cons) Contains(x Item) bool {
+func (xs *cons) Contains(x interface{}) bool {
 	return xs.first == x || xs.rest.Contains(x)
 	//TODO make this tail recursive
 }
 
-func (xs *cons) Front() (Item, error) {
+func (xs *cons) Front() (interface{}, error) {
 	return xs.first, nil
 }
 
@@ -55,7 +55,7 @@ func (cons) IsEmpty() bool {
 	return false
 }
 
-func (xs *cons) Each(f func(Item)) {
+func (xs *cons) Each(f func(interface{})) {
 	f(xs.first)
 	xs.rest.Each(f) //recursion
 }
@@ -74,11 +74,11 @@ func (xs *cons) Reverse() Seq {
 }
 
 // Add to beginning
-func (xs *cons) AddFront(x Item) Seq {
+func (xs *cons) AddFront(x interface{}) Seq {
 	return &cons{x, xs}
 }
 
-func (xs *cons) AddBack(x Item) Seq {
+func (xs *cons) AddBack(x interface{}) Seq {
 	return &cons{xs.first, xs.rest.AddBack(x)}
 }
 
@@ -87,15 +87,15 @@ func (xs *cons) AddAll(that Seq) Seq {
 	return &cons{xs.first, xs.rest.AddAll(that)}
 }
 
-func (xs *cons) Forall(f func(Item) bool) bool {
+func (xs *cons) Forall(f func(interface{}) bool) bool {
 	return f(xs.first) && xs.rest.Forall(f)
 }
 
-func (xs *cons) Map(f func(Item) Item) Seq {
+func (xs *cons) Map(f func(interface{}) interface{}) Seq {
 	return &cons{f(xs.first), xs.rest.Map(f)}
 }
 
-func (xs *cons) Filter(f func(Item) bool) Seq {
+func (xs *cons) Filter(f func(interface{}) bool) Seq {
 	if f(xs.first) {
 		return &cons{xs.first, xs.rest.Filter(f)}
 	}
@@ -110,6 +110,6 @@ func (xs *cons) String() string {
 	return buf.String()
 }
 
-func (xs *cons) addTreeNode(x Item, itemS string) *tree {
+func (xs *cons) addTreeNode(x interface{}, itemS string) *tree {
 	return null{}.addTreeNode(x, itemS)
 }

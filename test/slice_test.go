@@ -87,7 +87,7 @@ func ExampleAddA() {
 }
 
 func ExampleEachA() {
-	intsA.Each(func(item immut.Item) {
+	intsA.Each(func(item interface{}) {
 		i := item.(int)
 		p(i * i)
 	})
@@ -130,7 +130,7 @@ func ExampleJoinA() {
 }
 
 func ExampleMapA() {
-	p(intsA.Map(func(item immut.Item) immut.Item {
+	p(intsA.Map(func(item interface{}) interface{} {
 		i := item.(int)
 		return i * i
 	}))
@@ -139,7 +139,7 @@ func ExampleMapA() {
 }
 
 func ExampleFilterA() {
-	p(intsA.Filter(func(item immut.Item) bool {
+	p(intsA.Filter(func(item interface{}) bool {
 		i := item.(int)
 		return i%2 == 1
 	}))
@@ -162,7 +162,7 @@ func ExampleReverseA() {
 }
 
 func ExampleMap2A() {
-	p(immut.Slice(2, 4, 7).Map(func(x immut.Item) immut.Item {
+	p(immut.Slice(2, 4, 7).Map(func(x interface{}) interface{} {
 		return x.(int) + 3
 	}))
 	// Output:

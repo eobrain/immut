@@ -171,7 +171,7 @@ func ExampleSetisSet() {
 }
 
 func ExampleSetEach() {
-	intsSet.Each(func(item immut.Item) {
+	intsSet.Each(func(item interface{}) {
 		i := item.(int)
 		p(i * i)
 	})
@@ -238,7 +238,7 @@ func ExampleSetJoin() {
 }
 
 func ExampleSetMap() {
-	p(intsSet.Map(func(item immut.Item) immut.Item {
+	p(intsSet.Map(func(item interface{}) interface{} {
 		i := item.(int)
 		return i * i
 	}))
@@ -247,7 +247,7 @@ func ExampleSetMap() {
 }
 
 func ExampleSetFilter() {
-	p(intsSet.Filter(func(item immut.Item) bool {
+	p(intsSet.Filter(func(item interface{}) bool {
 		i := item.(int)
 		return i%2 == 1
 	}))

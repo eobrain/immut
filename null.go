@@ -29,11 +29,11 @@ func (null) Len() int {
 	return 0
 }
 
-func (null) Contains(Item) bool {
+func (null) Contains(interface{}) bool {
 	return false
 }
 
-func (null) Front() (Item, error) {
+func (null) Front() (interface{}, error) {
 	return nil, errors.New("getting Front of empty seq")
 }
 
@@ -47,7 +47,7 @@ func (null) IsEmpty() bool {
 	return true
 }
 
-func (null) Each(f func(Item)) {
+func (null) Each(f func(interface{})) {
 	//do nothing
 }
 
@@ -59,11 +59,11 @@ func (this null) Reverse() Seq {
 	return this
 }
 
-func (this null) AddFront(item Item) Seq {
+func (this null) AddFront(item interface{}) Seq {
 	return &cons{item, this}
 }
 
-func (this null) AddBack(item Item) Seq {
+func (this null) AddBack(item interface{}) Seq {
 	return &cons{item, this}
 }
 
@@ -71,18 +71,18 @@ func (this null) AddAll(that Seq) Seq {
 	return that
 }
 
-func (this null) Forall(f func(Item) bool) bool {
+func (this null) Forall(f func(interface{}) bool) bool {
 	return true
 }
 
-func (this null) Map(f func(Item) Item) Seq {
+func (this null) Map(f func(interface{}) interface{}) Seq {
 	return this
 }
 
-func (this null) Filter(f func(Item) bool) Seq {
+func (this null) Filter(f func(interface{}) bool) Seq {
 	return this
 }
 
-func (this null) addTreeNode(item Item, itemS string) *tree {
+func (this null) addTreeNode(item interface{}, itemS string) *tree {
 	return &tree{item, itemS, null{}, null{}}
 }
