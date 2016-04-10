@@ -16,22 +16,22 @@ package test
 
 import (
 	"bytes"
+	"github.com/eobrain/immut"
+	"github.com/eobrain/immut/set"
 	"log"
 	"math/rand"
 	"testing"
-
-	"github.com/eobrain/immut"
 )
 
-var emptySet = immut.Set()
-var intsSet = immut.Set(2, 3, 1)
-var stringsSet = immut.Set("one", "two", "three", "four")
+var emptySet = set.New()
+var intsSet = set.New(2, 3, 1)
+var stringsSet = set.New("one", "two", "three", "four")
 
 func ExampleSetString() {
 	p(emptySet)
 	p(intsSet)
 	p(stringsSet)
-	p(immut.Set(2, 4, 3, 1))
+	p(set.New(2, 4, 3, 1))
 	// Output:
 	// <nil>
 	// {1,2,3}
@@ -49,9 +49,9 @@ func ExampleSetRemove() {
 	p(stringsSet, "- one  =", immut.Remove(stringsSet, "one"))
 	p(stringsSet, "- two  =", immut.Remove(stringsSet, "two"))
 	p(stringsSet, "- four =", immut.Remove(stringsSet, "four"))
-	p(immut.Remove(immut.Set(2, 4, 3, 1), 2))
-	p(immut.Remove(immut.Set(2, 4, 3, 1), 4))
-	p(immut.Remove(immut.Set(2, 4, 3, 1), 1))
+	p(immut.Remove(set.New(2, 4, 3, 1), 2))
+	p(immut.Remove(set.New(2, 4, 3, 1), 4))
+	p(immut.Remove(set.New(2, 4, 3, 1), 1))
 	// Output:
 	// <nil>
 	// {1,2,3}
@@ -106,14 +106,14 @@ func BenchmarkSetFront(b *testing.B) {
 func ExampleSetAddAll() {
 	p(intsSet.AddAll(stringsSet))
 	p(stringsSet.AddAll(intsSet))
-	p(immut.Set("a", "b", "c", "e", "d", "f", "g", "h").AddAll(immut.Set("X")))
-	p(immut.Set("X").AddAll(immut.Set("a", "b", "c", "d", "e", "g", "f", "h")))
-	p(immut.Set("a", "b", "c", "d", "e", "f", "g", "h").AddAll(immut.Set("X", "Y")))
-	p(immut.Set("X", "Y").AddAll(immut.Set("a", "b", "c", "d", "e", "f", "g", "h")))
-	p(immut.Set("a", "b", "c", "d", "e", "f", "g", "h").AddAll(immut.Set("X", "Y")))
-	p(immut.Set("X", "Y").AddAll(immut.Set("a", "b", "c", "d", "e", "f", "g", "h")))
-	p(immut.Set("a", "b", "c", "d", "e", "f", "g", "h").AddAll(immut.Set("X", "Y", "Z")))
-	p(immut.Set("X", "Y", "Z").AddAll(immut.Set("a", "b", "c", "d", "e", "f", "g", "h")))
+	p(set.New("a", "b", "c", "e", "d", "f", "g", "h").AddAll(set.New("X")))
+	p(set.New("X").AddAll(set.New("a", "b", "c", "d", "e", "g", "f", "h")))
+	p(set.New("a", "b", "c", "d", "e", "f", "g", "h").AddAll(set.New("X", "Y")))
+	p(set.New("X", "Y").AddAll(set.New("a", "b", "c", "d", "e", "f", "g", "h")))
+	p(set.New("a", "b", "c", "d", "e", "f", "g", "h").AddAll(set.New("X", "Y")))
+	p(set.New("X", "Y").AddAll(set.New("a", "b", "c", "d", "e", "f", "g", "h")))
+	p(set.New("a", "b", "c", "d", "e", "f", "g", "h").AddAll(set.New("X", "Y", "Z")))
+	p(set.New("X", "Y", "Z").AddAll(set.New("a", "b", "c", "d", "e", "f", "g", "h")))
 	// Output:
 	// {1,2,3,four,one,three,two}
 	// {1,2,3,four,one,three,two}
@@ -137,10 +137,10 @@ func ExampleSetAdd() {
 }
 
 func ExampleSetAddAnyOrder() {
-	p(immut.Set(1).AddFront(2))
-	p(immut.Set(2).AddFront(1))
-	p(immut.Set("aaa").AddFront("bbb"))
-	p(immut.Set("bbb").AddFront("aaa"))
+	p(set.New(1).AddFront(2))
+	p(set.New(2).AddFront(1))
+	p(set.New("aaa").AddFront("bbb"))
+	p(set.New("bbb").AddFront("aaa"))
 	// Output:
 	// {1,2}
 	// {1,2}
@@ -149,8 +149,8 @@ func ExampleSetAddAnyOrder() {
 }
 
 func ExampleSetInitAnyOrder() {
-	p(immut.Set(1, 2))
-	p(immut.Set(2, 1))
+	p(set.New(1, 2))
+	p(set.New(2, 1))
 	// Output:
 	// {1,2}
 	// {1,2}
@@ -182,7 +182,7 @@ func ExampleSetEach() {
 }
 
 func ExampleSetBigAllSame() {
-	big := x8192(immut.Set("foo"))
+	big := x8192(set.New("foo"))
 	p(big.Len())
 	// Output:
 	// 1
@@ -192,7 +192,7 @@ var r = rand.New(rand.NewSource(99))
 
 func random(n int) immut.Seq {
 	if n == 0 {
-		return immut.Set()
+		return set.New()
 	}
 	return random(n - 1).AddFront(r.Float64())
 }
@@ -207,7 +207,7 @@ func ExampleSetBig() {
 
 /*
 func TestVeryBig(t *testing.T) {
-	big := x8192(immut.Set("foo"))
+	big := x8192(set.New("foo"))
 	vBig := x8192(big)
 	if vBig.Len() != 8192*8192 {
 		t.FailNow()
@@ -255,14 +255,13 @@ func ExampleSetFilter() {
 	// {1,3}
 }
 
-// TODO(eob) Figure out why we are getting lists rather than sets.
 func ExampleRest() {
 	p(intsSet.Rest())
 	p(stringsSet.Rest())
 	p(emptySet.Rest())
 	// Output:
-	// [2,3] <nil>
-	// [one,three,two] <nil>
+	// {2,3} <nil>
+	// {one,three,two} <nil>
 	// <nil> getting Rest of empty seq
 }
 

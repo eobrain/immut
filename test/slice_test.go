@@ -16,14 +16,13 @@ package test
 
 import (
 	"bytes"
+	"github.com/eobrain/immut/slice"
 	"testing"
-
-	"github.com/eobrain/immut"
 )
 
-var emptyA = immut.Slice()
-var intsA = immut.Slice(1, 2, 3)
-var stringsA = immut.Slice("one", "two", "three", "four")
+var emptyA = slice.New()
+var intsA = slice.New(1, 2, 3)
+var stringsA = slice.New("one", "two", "three", "four")
 
 func ExampleStringA() {
 	p(emptyA)
@@ -98,14 +97,14 @@ func ExampleEachA() {
 }
 
 func ExampleBigA() {
-	big := x8192(immut.Slice("foo"))
+	big := x8192(slice.New("foo"))
 	p(big.Len())
 	// Output:
 	// 8192
 }
 
 /*func TestVeryBig(t *testing.T) {
-	big := x8192(immut.Slice("foo"))
+	big := x8192(slice.New("foo"))
 	vBig := x8192(big)
 	if vBig.Len() != 8192*8192 {
 		t.FailNow()
@@ -150,19 +149,19 @@ func ExampleFilterA() {
 // For below see http://java.ociweb.com/mark/clojure/article.html
 
 func ExampleCountA() {
-	p(immut.Slice(19, "yellow", true).Len())
+	p(slice.New(19, "yellow", true).Len())
 	// Output:
 	// 3
 }
 
 func ExampleReverseA() {
-	p(immut.Slice(2, 4, 7).Reverse())
+	p(slice.New(2, 4, 7).Reverse())
 	// Output:
 	// [7,4,2]
 }
 
 func ExampleMap2A() {
-	p(immut.Slice(2, 4, 7).Map(func(x interface{}) interface{} {
+	p(slice.New(2, 4, 7).Map(func(x interface{}) interface{} {
 		return x.(int) + 3
 	}))
 	// Output:

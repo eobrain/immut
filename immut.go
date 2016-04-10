@@ -70,7 +70,8 @@ type Seq interface {
 	//function is true
 	Filter(func(interface{}) bool) Seq
 
-	addTreeNode(interface{}, string) *tree
+	//return a newly created slice with all stored items
+	Items() []interface{}
 }
 
 // Return sequence resulting from removing the item, or the sequence

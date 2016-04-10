@@ -1,4 +1,4 @@
-package immut
+package slice
 
 // Copyright 2013 Eamonn O'Brien-Strain
 //
@@ -17,12 +17,13 @@ package immut
 import (
 	"bytes"
 	"fmt"
+	"github.com/eobrain/immut"
 )
 
 // Create a new list containing the arguments.
-func Slice(item ...interface{}) Seq {
+func New(item ...interface{}) immut.Seq {
 	if len(item) == 0 {
-		return null{}
+		return empty{}
 	}
 	return slice(item)
 }
@@ -30,10 +31,12 @@ func Slice(item ...interface{}) Seq {
 // Everything below here is private
 
 type slice []interface{}
+type empty struct{}
 
 func (xs slice) Len() int {
 	return len(xs)
 }
+func (empty) Len() int { return 0 }
 
 func (xs slice) Contains(x interface{}) bool {
 	for _, xx := range xs {
@@ -43,27 +46,34 @@ func (xs slice) Contains(x interface{}) bool {
 	}
 	return false
 }
+func (empty) Contains(interface{}) bool { return false }
 
 func (xs slice) Front() (interface{}, error) {
 	return xs[0], nil
 }
+func (empty) Front() (interface{}, error) {
+	return nil, fmt.Errorf("getting Front of empty seq")
+}
 
-func (xs slice) Rest() (Seq, error) {
+func (xs slice) Rest() (immut.Seq, error) {
 	if len(xs) == 1 {
-		return null{}, nil
+		return empty{}, nil
 	}
 	return xs[1:], nil
 }
-
-func (slice) IsEmpty() bool {
-	return false
+func (empty) Rest() (immut.Seq, error) {
+	return nil, fmt.Errorf("getting Rest of empty seq")
 }
+
+func (slice) IsEmpty() bool { return false }
+func (empty) IsEmpty() bool { return true }
 
 func (xs slice) Each(f func(interface{})) {
 	for _, x := range xs {
 		f(x)
 	}
 }
+func (empty) Each(f func(interface{})) {}
 
 // O(n)
 func (xs slice) Join(sep string, buf *bytes.Buffer) {
@@ -73,8 +83,9 @@ func (xs slice) Join(sep string, buf *bytes.Buffer) {
 		buf.WriteString(fmt.Sprintf("%v", x))
 	}
 }
+func (empty) Join(string, *bytes.Buffer) {}
 
-func (xs slice) Reverse() Seq {
+func (xs slice) Reverse() immut.Seq {
 	n := len(xs)
 	ys := make(slice, n)
 	for i := 0; i < n; i++ {
@@ -82,25 +93,28 @@ func (xs slice) Reverse() Seq {
 	}
 	return ys
 }
+func (n empty) Reverse() immut.Seq { return n }
 
 // Add to beginning
-func (xs slice) AddFront(x interface{}) Seq {
+func (xs slice) AddFront(x interface{}) immut.Seq {
 	n := len(xs)
 	ys := make(slice, n+1)
 	ys[0] = x
 	copy(ys[1:], xs)
 	return ys
 }
+func (empty) AddFront(item interface{}) immut.Seq { return New(item) }
 
-func (xs slice) AddBack(x interface{}) Seq {
+func (xs slice) AddBack(x interface{}) immut.Seq {
 	n := len(xs)
 	ys := make(slice, n+1)
 	ys[n] = x
 	copy(ys[:n], xs)
 	return ys
 }
+func (n empty) AddBack(item interface{}) immut.Seq { return New(item) }
 
-func (xs slice) AddAll(that Seq) Seq {
+func (xs slice) AddAll(that immut.Seq) immut.Seq {
 	n := len(xs)
 	thatA, ok := that.(slice)
 	if ok {
@@ -116,6 +130,7 @@ func (xs slice) AddAll(that Seq) Seq {
 	})
 	return ys
 }
+func (n empty) AddAll(other immut.Seq) immut.Seq { return other }
 
 func (xs slice) Forall(f func(interface{}) bool) bool {
 	for _, x := range xs {
@@ -125,8 +140,9 @@ func (xs slice) Forall(f func(interface{}) bool) bool {
 	}
 	return true
 }
+func (empty) Forall(f func(interface{}) bool) bool { return true }
 
-func (xs slice) Map(f func(interface{}) interface{}) Seq {
+func (xs slice) Map(f func(interface{}) interface{}) immut.Seq {
 	n := len(xs)
 	ys := make(slice, n)
 	for i := 0; i < n; i++ {
@@ -134,8 +150,9 @@ func (xs slice) Map(f func(interface{}) interface{}) Seq {
 	}
 	return ys
 }
+func (n empty) Map(f func(interface{}) interface{}) immut.Seq { return n }
 
-func (xs slice) Filter(f func(interface{}) bool) Seq {
+func (xs slice) Filter(f func(interface{}) bool) immut.Seq {
 	ys := slice{}
 	for _, x := range xs {
 		if f(x) {
@@ -144,6 +161,7 @@ func (xs slice) Filter(f func(interface{}) bool) Seq {
 	}
 	return ys
 }
+func (n empty) Filter(f func(interface{}) bool) immut.Seq { return n }
 
 func (xs slice) String() string {
 	var buf bytes.Buffer
@@ -152,7 +170,15 @@ func (xs slice) String() string {
 	buf.WriteString("]")
 	return buf.String()
 }
+func (empty) String() string { return "<nil>" }
 
-func (xs slice) addTreeNode(x interface{}, itemS string) *tree {
-	return null{}.addTreeNode(x, itemS)
+func (xs slice) Items() (ys []interface{}) {
+	ys = make([]interface{}, xs.Len())
+	copy(ys, xs)
+	return
 }
+func (empty) Items() []interface{} { return []interface{}{} }
+
+//func (xs slice) addTreeNode(x interface{}, itemS string) *tree {
+//	return empty{}.addTreeNode(x, itemS)
+//}

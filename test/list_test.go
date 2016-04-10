@@ -16,14 +16,14 @@ package test
 
 import (
 	"bytes"
-	"testing"
-
 	"github.com/eobrain/immut"
+	"github.com/eobrain/immut/list"
+	"testing"
 )
 
-var empty = immut.List()
-var ints = immut.List(1, 2, 3)
-var strings = immut.List("one", "two", "three", "four")
+var empty = list.New()
+var ints = list.New(1, 2, 3)
+var strings = list.New("one", "two", "three", "four")
 
 func ExampleString() {
 	p(empty)
@@ -115,14 +115,14 @@ func x8192(x immut.Seq) (result immut.Seq) {
 }
 
 func ExampleBig() {
-	big := x8192(immut.List("foo"))
+	big := x8192(list.New("foo"))
 	p(big.Len())
 	// Output:
 	// 8192
 }
 
 /*func TestVeryBig(t *testing.T) {
-	big := x8192(immut.List("foo"))
+	big := x8192(list.New("foo"))
 	vBig := x8192(big)
 	if vBig.Len() != 8192*8192 {
 		t.FailNow()
@@ -167,19 +167,19 @@ func ExampleFilter() {
 // For below see http://java.ociweb.com/mark/clojure/article.html
 
 func ExampleCount() {
-	p(immut.List(19, "yellow", true).Len())
+	p(list.New(19, "yellow", true).Len())
 	// Output:
 	// 3
 }
 
 func ExampleReverse() {
-	p(immut.List(2, 4, 7).Reverse())
+	p(list.New(2, 4, 7).Reverse())
 	// Output:
 	// [7,4,2]
 }
 
 func ExampleMap2() {
-	p(immut.List(2, 4, 7).Map(func(x interface{}) interface{} {
+	p(list.New(2, 4, 7).Map(func(x interface{}) interface{} {
 		return x.(int) + 3
 	}))
 	// Output:

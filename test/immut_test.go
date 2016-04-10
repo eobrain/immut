@@ -17,6 +17,9 @@ package test
 import (
 	"fmt"
 	"github.com/eobrain/immut"
+	"github.com/eobrain/immut/list"
+	"github.com/eobrain/immut/set"
+	"github.com/eobrain/immut/slice"
 	"log"
 	"testing"
 )
@@ -90,29 +93,29 @@ func TestNth(t *testing.T) {
 		empty,
 		ints,
 		strings,
-		x8192(immut.List("foo")),
-		immut.List(19, "yellow", true),
-		immut.List(2, 4, 7),
-		immut.List(2, 4),
-		immut.List(2),
-		immut.List("Moe", "Larry", "Curly", "Shemp"),
+		x8192(list.New("foo")),
+		list.New(19, "yellow", true),
+		list.New(2, 4, 7),
+		list.New(2, 4),
+		list.New(2),
+		list.New("Moe", "Larry", "Curly", "Shemp"),
 		emptyA,
 		intsA,
 		stringsA,
-		x8192(immut.Slice("foo")),
-		immut.Slice(19, "yellow", true),
-		immut.Slice(2, 4, 7),
-		immut.Slice(2, 4),
-		immut.Slice(2),
-		immut.Slice("Moe", "Larry", "Curly", "Shemp"),
+		x8192(slice.New("foo")),
+		slice.New(19, "yellow", true),
+		slice.New(2, 4, 7),
+		slice.New(2, 4),
+		slice.New(2),
+		slice.New("Moe", "Larry", "Curly", "Shemp"),
 		emptySet,
 		intsSet,
 		stringsSet,
-		immut.Set(2, 4, 3, 1),
+		set.New(2, 4, 3, 1),
 		intsSet.AddAll(stringsSet),
-		immut.Set("X", "Y", "Z").AddAll(immut.Set("a", "b", "c", "d", "e", "f", "g", "h")),
-		immut.Set(1, 2),
-		immut.Set(1),
+		set.New("X", "Y", "Z").AddAll(set.New("a", "b", "c", "d", "e", "f", "g", "h")),
+		set.New(1, 2),
+		set.New(1),
 	}
 	for i, xs := range seqs {
 		if a, b := str(immut.Nth(xs, 0)), str(xs.Front()); a != b {
@@ -156,7 +159,7 @@ func BenchmarkMakeBigListA(b *testing.B) {
 
 func BenchmarkBigListNth(b *testing.B) {
 	b.StopTimer()
-	big := x8192(immut.List(1))
+	big := x8192(list.New(1))
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		immut.Nth(big, 8000)
@@ -165,7 +168,7 @@ func BenchmarkBigListNth(b *testing.B) {
 
 func BenchmarkBigListNthA(b *testing.B) {
 	b.StopTimer()
-	big := x8192(immut.Slice(1))
+	big := x8192(slice.New(1))
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		immut.Nth(big, 8000)
@@ -179,7 +182,7 @@ func BenchmarkNilIsEmpty(b *testing.B) {
 }
 
 func ExampleNth() {
-	stooges := immut.List("Moe", "Larry", "Curly", "Shemp")
+	stooges := list.New("Moe", "Larry", "Curly", "Shemp")
 	p(stooges.Front())
 	p(immut.Second(stooges))
 	p(immut.Back(stooges))
@@ -192,7 +195,7 @@ func ExampleNth() {
 }
 
 func ExampleNthA() {
-	stooges := immut.Slice("Moe", "Larry", "Curly", "Shemp")
+	stooges := slice.New("Moe", "Larry", "Curly", "Shemp")
 	p(stooges.Front())
 	p(immut.Second(stooges))
 	p(immut.Back(stooges))
@@ -249,35 +252,35 @@ func findAddsTo10(data immut.Seq) (int, int, error) {
 }
 
 func TestBasic1(t *testing.T) {
-	if a, b, err := findAddsTo10(immut.List(2, 4, 7, 8, 10, 12)); err != nil || a != 2 || b != 8 {
+	if a, b, err := findAddsTo10(list.New(2, 4, 7, 8, 10, 12)); err != nil || a != 2 || b != 8 {
 		t.Errorf("got %d, %d, %q", a, b, err)
 	}
 }
 func TestBasic2(t *testing.T) {
-	if a, b, err := findAddsTo10(immut.List(5, 6, 8, 22, 4)); err != nil || a != 6 || b != 4 {
+	if a, b, err := findAddsTo10(list.New(5, 6, 8, 22, 4)); err != nil || a != 6 || b != 4 {
 		t.Errorf("got %d, %d, %q", a, b, err)
 	}
 }
 
 func TestBasic3(t *testing.T) {
-	if a, b, err := findAddsTo10(immut.List(0, 20, 50, 100, 999, 999, 999)); err == nil {
+	if a, b, err := findAddsTo10(list.New(0, 20, 50, 100, 999, 999, 999)); err == nil {
 		t.Errorf("got %d, %d, %q", a, b, err)
 	}
 }
 
 func TestBasic4(t *testing.T) {
-	if a, b, err := findAddsTo10(immut.List(99, 99, 3, 7, 99, 99, 99)); err != nil || a != 3 || b != 7 {
+	if a, b, err := findAddsTo10(list.New(99, 99, 3, 7, 99, 99, 99)); err != nil || a != 3 || b != 7 {
 		t.Errorf("got %d, %d, %q", a, b, err)
 	}
 }
 
 func TestBasic5(t *testing.T) {
-	if a, b, err := findAddsTo10(immut.List(99, 99, 3, 99, 7, 99, 99, 99)); err != nil || a != 3 || b != 7 {
+	if a, b, err := findAddsTo10(list.New(99, 99, 3, 99, 7, 99, 99, 99)); err != nil || a != 3 || b != 7 {
 		t.Errorf("got %d, %d, %q", a, b, err)
 	}
 }
 func TestBasic6(t *testing.T) {
-	if a, b, err := findAddsTo10(immut.List(3, 99, 99, 99, 99, 99, 99, 7)); err != nil || a != 3 || b != 7 {
+	if a, b, err := findAddsTo10(list.New(3, 99, 99, 99, 99, 99, 99, 7)); err != nil || a != 3 || b != 7 {
 		t.Errorf("got %d, %d, %q", a, b, err)
 	}
 }
