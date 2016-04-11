@@ -85,8 +85,8 @@ func ExampleAddA() {
 
 }
 
-func ExampleEachA() {
-	intsA.Each(func(item interface{}) {
+func ExampleDoA() {
+	intsA.Do(func(item interface{}) {
 		i := item.(int)
 		p(i * i)
 	})

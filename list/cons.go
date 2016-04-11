@@ -86,11 +86,11 @@ func (xs *cons) IsEmpty() bool {
 func (empty) IsEmpty() bool { return true }
 
 // O(n)
-func (xs *cons) Each(f func(interface{})) {
+func (xs *cons) Do(f func(interface{})) {
 	f(xs.first)
-	xs.rest.Each(f) //recursion
+	xs.rest.Do(f) //recursion
 }
-func (empty) Each(f func(interface{})) {}
+func (empty) Do(f func(interface{})) {}
 
 // O(n)
 func (xs *cons) Join(sep string, buf *bytes.Buffer) {
@@ -167,7 +167,7 @@ func (xs *cons) Items() (ys []interface{}) {
 	xs.check()
 	ys = make([]interface{}, xs.Len())
 	i := 0
-	xs.Each(func(x interface{}) {
+	xs.Do(func(x interface{}) {
 		ys[i] = x
 		i++
 	})

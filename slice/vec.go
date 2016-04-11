@@ -73,12 +73,12 @@ func (slice) IsEmpty() bool { return false }
 func (empty) IsEmpty() bool { return true }
 
 // O(n)
-func (xs slice) Each(f func(interface{})) {
+func (xs slice) Do(f func(interface{})) {
 	for _, x := range xs {
 		f(x)
 	}
 }
-func (empty) Each(f func(interface{})) {}
+func (empty) Do(f func(interface{})) {}
 
 // O(n)
 func (xs slice) Join(sep string, buf *bytes.Buffer) {

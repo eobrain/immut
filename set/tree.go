@@ -110,12 +110,12 @@ func (xs *Tree) IsEmpty() bool { return false }
 func (Empty) IsEmpty() bool    { return true }
 
 // O(n)
-func (xs *Tree) Each(f func(interface{})) {
-	xs.left.Each(f)
+func (xs *Tree) Do(f func(interface{})) {
+	xs.left.Do(f)
 	f(xs.value)
-	xs.right.Each(f)
+	xs.right.Do(f)
 }
-func (Empty) Each(f func(interface{})) {}
+func (Empty) Do(f func(interface{})) {}
 
 // O(n)
 func (xs *Tree) Join(sep string, buf *bytes.Buffer) {
@@ -277,7 +277,7 @@ func (Empty) String() string { return "{}" }
 func (xs *Tree) Items() (ys []interface{}) {
 	ys = make([]interface{}, xs.Len())
 	i := 0
-	xs.Each(func(x interface{}) {
+	xs.Do(func(x interface{}) {
 		ys[i] = x
 		i++
 	})

@@ -38,8 +38,8 @@ type Seq interface {
 	// IsEmpty is whether this is the empty seq.
 	IsEmpty() bool
 
-	// Each Apply the function to each item in the seq.
-	Each(func(interface{}))
+	// Apply the function to each item in the seq.
+	Do(func(interface{}))
 
 	// Join writes a concatenation of the string representations
 	// of the items separated by sep into the Writer.

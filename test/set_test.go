@@ -170,8 +170,8 @@ func ExampleSetisSet() {
 	// {1,2,3,4}
 }
 
-func ExampleSetEach() {
-	intsSet.Each(func(item interface{}) {
+func ExampleSetDo() {
+	intsSet.Do(func(item interface{}) {
 		i := item.(int)
 		p(i * i)
 	})
