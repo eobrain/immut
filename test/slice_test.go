@@ -29,7 +29,7 @@ func ExampleStringA() {
 	p(intsA)
 	p(stringsA)
 	// Output:
-	// <nil>
+	// []
 	// [1,2,3]
 	// [one,two,three,four]
 }

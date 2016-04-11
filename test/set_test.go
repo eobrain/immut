@@ -33,7 +33,7 @@ func ExampleSetString() {
 	p(stringsSet)
 	p(set.New(2, 4, 3, 1))
 	// Output:
-	// <nil>
+	// {}
 	// {1,2,3}
 	// {four,one,three,two}
 	// {1,2,3,4}
@@ -53,7 +53,7 @@ func ExampleSetRemove() {
 	p(immut.Remove(set.New(2, 4, 3, 1), 4))
 	p(immut.Remove(set.New(2, 4, 3, 1), 1))
 	// Output:
-	// <nil>
+	// {}
 	// {1,2,3}
 	// {1,2,3}
 	// {2,3}

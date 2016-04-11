@@ -30,7 +30,7 @@ func ExampleString() {
 	p(ints)
 	p(strings)
 	// Output:
-	// <nil>
+	// []
 	// [1,2,3]
 	// [one,two,three,four]
 }
