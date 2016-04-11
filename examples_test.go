@@ -8,6 +8,74 @@ import (
 	"github.com/eobrain/immut/slice"
 )
 
+func ExampleIsEmpty() {
+	seqs := []immut.Seq{
+		list.New(),
+		list.New(1, 2, 3),
+		slice.New(),
+		slice.New(1, 2, 3),
+		set.New(),
+		set.New(1, 2, 3),
+	}
+	for _, xs := range seqs {
+		fmt.Println(xs.IsEmpty())
+	}
+	// Output:
+	// true
+	// false
+	// true
+	// false
+	// true
+	// false
+}
+
+func ExampleLen() {
+	seqs := []immut.Seq{
+		list.New(),
+		list.New(1, 2, 3),
+		slice.New(),
+		slice.New(1, 2, 3),
+		set.New(),
+		set.New(1, 2, 3),
+		list.New(make([]interface{}, 999)...),
+	}
+	for _, xs := range seqs {
+		fmt.Println(xs.Len())
+	}
+	// Output:
+	// 0
+	// 3
+	// 0
+	// 3
+	// 0
+	// 3
+	// 999
+}
+
+func ExampleFront() {
+
+	seqs := []immut.Seq{
+		list.New(),
+		list.New(3, 2, 1),
+		slice.New(),
+		slice.New(3, 2, 1),
+		set.New(),
+		set.New(3, 2, 1),
+	}
+
+	for _, xs := range seqs {
+		fmt.Println(xs.Front())
+	}
+
+	// Output:
+	// <nil> getting Front of empty seq
+	// 3 <nil>
+	// <nil> getting Front of empty seq
+	// 3 <nil>
+	// <nil> getting Front of empty seq
+	// 1 <nil>
+}
+
 func ExampleFront_list() {
 	stooges := list.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Front())

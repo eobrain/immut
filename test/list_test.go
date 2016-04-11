@@ -16,6 +16,7 @@ package test
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/eobrain/immut"
 	"github.com/eobrain/immut/list"
 	"testing"
@@ -26,43 +27,13 @@ var ints = list.New(1, 2, 3)
 var strings = list.New("one", "two", "three", "four")
 
 func ExampleString() {
-	p(empty)
-	p(ints)
-	p(strings)
+	fmt.Println(empty)
+	fmt.Println(ints)
+	fmt.Println(strings)
 	// Output:
 	// []
 	// [1,2,3]
 	// [one,two,three,four]
-}
-
-func ExampleIsEmpty() {
-	p(empty.IsEmpty())
-	p(ints.IsEmpty())
-	// Output:
-	// true
-	// false
-}
-
-func ExampleLen() {
-	p(empty.Len())
-	p(ints.Len())
-	p(strings.Len())
-	// Output:
-	// 0
-	// 3
-	// 4
-}
-
-func ExampleFront() {
-
-	p(strings.Front())
-	p(ints.Front())
-	p(empty.Front())
-
-	// Output:
-	// one <nil>
-	// 1 <nil>
-	// <nil> getting Front of empty seq
 }
 
 func BenchmarkListFront(b *testing.B) {
@@ -72,14 +43,14 @@ func BenchmarkListFront(b *testing.B) {
 }
 
 func ExampleAddAll() {
-	p(ints.AddAll(strings))
+	fmt.Println(ints.AddAll(strings))
 	// Output:
 	// [1,2,3,one,two,three,four]
 }
 
 func ExampleAdd() {
-	p(strings.AddFront("zero"))
-	p(strings.AddBack("five"))
+	fmt.Println(strings.AddFront("zero"))
+	fmt.Println(strings.AddBack("five"))
 	// Output:
 	// [zero,one,two,three,four]
 	// [one,two,three,four,five]
@@ -89,7 +60,7 @@ func ExampleAdd() {
 func ExampleDo() {
 	ints.Do(func(item interface{}) {
 		i := item.(int)
-		p(i * i)
+		fmt.Println(i * i)
 	})
 	// Output:
 	// 1
@@ -116,7 +87,7 @@ func x8192(x immut.Seq) (result immut.Seq) {
 
 func ExampleBig() {
 	big := x8192(list.New("foo"))
-	p(big.Len())
+	fmt.Println(big.Len())
 	// Output:
 	// 8192
 }
@@ -140,14 +111,14 @@ func ExampleJoin() {
 	strings.Join("|", &buf)
 	buf.WriteString("\n")
 	ints.Join(" <--> ", &buf)
-	p(buf.String())
+	fmt.Println(buf.String())
 	// Output:
 	// one|two|three|four
 	// 1 <--> 2 <--> 3
 }
 
 func ExampleMap() {
-	p(ints.Map(func(item interface{}) interface{} {
+	fmt.Println(ints.Map(func(item interface{}) interface{} {
 		i := item.(int)
 		return i * i
 	}))
@@ -156,7 +127,7 @@ func ExampleMap() {
 }
 
 func ExampleFilter() {
-	p(ints.Filter(func(item interface{}) bool {
+	fmt.Println(ints.Filter(func(item interface{}) bool {
 		i := item.(int)
 		return i%2 == 1
 	}))
@@ -167,19 +138,19 @@ func ExampleFilter() {
 // For below see http://java.ociweb.com/mark/clojure/article.html
 
 func ExampleCount() {
-	p(list.New(19, "yellow", true).Len())
+	fmt.Println(list.New(19, "yellow", true).Len())
 	// Output:
 	// 3
 }
 
 func ExampleReverse() {
-	p(list.New(2, 4, 7).Reverse())
+	fmt.Println(list.New(2, 4, 7).Reverse())
 	// Output:
 	// [7,4,2]
 }
 
 func ExampleMap2() {
-	p(list.New(2, 4, 7).Map(func(x interface{}) interface{} {
+	fmt.Println(list.New(2, 4, 7).Map(func(x interface{}) interface{} {
 		return x.(int) + 3
 	}))
 	// Output:
