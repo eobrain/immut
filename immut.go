@@ -45,10 +45,10 @@ type Seq interface {
 	// of the items separated by sep into the Writer.
 	Join(string, *bytes.Buffer)
 
-	// AddFront returns a new seq with the item added on to the beginning.
+	// AddFront returns a new seq with the item unshifted on to the beginning.
 	AddFront(interface{}) Seq
 
-	// return a new seq with the item added on to the end
+	// return a new seq with the item pushed on to the end
 	AddBack(interface{}) Seq
 
 	//return a new seq that is a concatenation of this seq with the given one
