@@ -101,38 +101,17 @@ func (xs slice) Reverse() immut.Seq {
 func (n empty) Reverse() immut.Seq { return n }
 
 func (xs slice) AddFront(x interface{}) immut.Seq {
-	n := len(xs)
-	ys := make(slice, n+1)
-	ys[0] = x
-	copy(ys[1:], xs)
-	return ys
+	return slice(append([]interface{}{x}, xs...))
 }
 func (empty) AddFront(item interface{}) immut.Seq { return New(item) }
 
 func (xs slice) AddBack(x interface{}) immut.Seq {
-	n := len(xs)
-	ys := make(slice, n+1)
-	ys[n] = x
-	copy(ys[:n], xs)
-	return ys
+	return slice(append(xs.Items(), x))
 }
 func (n empty) AddBack(item interface{}) immut.Seq { return New(item) }
 
 func (xs slice) AddAll(that immut.Seq) immut.Seq {
-	n := len(xs)
-	thatA, ok := that.(slice)
-	if ok {
-		m := len(thatA)
-		ys := make(slice, n+m)
-		copy(ys[:n], xs)
-		copy(ys[n:], thatA)
-		return ys
-	}
-	ys := make(slice, n)
-	that.Each(func(x interface{}) {
-		ys = append(ys, x)
-	})
-	return ys
+	return slice(append(xs.Items(), that.Items()...))
 }
 func (n empty) AddAll(other immut.Seq) immut.Seq { return other }
 
