@@ -42,32 +42,6 @@ func BenchmarkListFront(b *testing.B) {
 	}
 }
 
-func ExampleAddAll() {
-	fmt.Println(ints.AddAll(strings))
-	// Output:
-	// [1,2,3,one,two,three,four]
-}
-
-func ExampleAdd() {
-	fmt.Println(strings.AddFront("zero"))
-	fmt.Println(strings.AddBack("five"))
-	// Output:
-	// [zero,one,two,three,four]
-	// [one,two,three,four,five]
-
-}
-
-func ExampleDo() {
-	ints.Do(func(item interface{}) {
-		i := item.(int)
-		fmt.Println(i * i)
-	})
-	// Output:
-	// 1
-	// 4
-	// 9
-}
-
 func x8192(x immut.Seq) (result immut.Seq) {
 	x2 := x.AddAll(x)
 	x4 := x2.AddAll(x2)

@@ -228,3 +228,84 @@ func ExampleRemove_set() {
 	// {four,one,three}
 	// {one,three,two}
 }
+
+func ExampleAddAll_list() {
+	ints := list.New(1, 2, 3)
+	strings := list.New("one", "two", "three", "four")
+	fmt.Println(ints.AddAll(strings))
+	fmt.Println(strings.AddAll(ints))
+	// Output:
+	// [1,2,3,one,two,three,four]
+	// [one,two,three,four,1,2,3]
+}
+
+func ExampleAddAll_slice() {
+	ints := slice.New(1, 2, 3)
+	strings := slice.New("one", "two", "three", "four")
+	fmt.Println(ints.AddAll(strings))
+	fmt.Println(strings.AddAll(ints))
+	// Output:
+	// [1,2,3,one,two,three,four]
+	// [one,two,three,four,1,2,3]
+}
+
+func ExampleAddAll_set() {
+	ints := set.New(1, 2, 3)
+	strings := set.New("one", "two", "three", "four")
+	fmt.Println(ints.AddAll(strings))
+	fmt.Println(strings.AddAll(ints))
+	// Output:
+	// {1,2,3,four,one,three,two}
+	// {1,2,3,four,one,three,two}
+}
+
+func ExampleAddFront() {
+	slice := slice.New("one", "two", "three", "four")
+	list := list.New("one", "two", "three", "four")
+	set := set.New("one", "two", "three", "four")
+	fmt.Println(list.AddFront("iiiii"))
+	fmt.Println(slice.AddFront("iiiii"))
+	fmt.Println(set.AddFront("iiiii"))
+	// Output:
+	// [iiiii,one,two,three,four]
+	// [iiiii,one,two,three,four]
+	// {four,iiiii,one,three,two}
+}
+func ExampleAddBack() {
+	slice := slice.New("one", "two", "three", "four")
+	list := list.New("one", "two", "three", "four")
+	set := set.New("one", "two", "three", "four")
+	fmt.Println(list.AddBack("iiiii"))
+	fmt.Println(slice.AddBack("iiiii"))
+	fmt.Println(set.AddBack("iiiii"))
+	// Output:
+	// [one,two,three,four,iiiii]
+	// [one,two,three,four,iiiii]
+	// {four,iiiii,one,three,two}
+}
+
+func ExampleDo() {
+	slice := slice.New(2, 30, 40)
+	list := list.New(2, 30, 40)
+	set := set.New(2, 30, 40)
+
+	printSquare := func(item interface{}) {
+		i := item.(int)
+		fmt.Println(i * i)
+	}
+
+	slice.Do(printSquare)
+	list.Do(printSquare)
+	set.Do(printSquare)
+
+	// Output:
+	// 4
+	// 900
+	// 1600
+	// 4
+	// 900
+	// 1600
+	// 4
+	// 900
+	// 1600
+}
