@@ -15,7 +15,6 @@ package test
 // limitations under the License.
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/eobrain/immut"
 	"github.com/eobrain/immut/list"
@@ -59,45 +58,10 @@ func x8192(x immut.Seq) (result immut.Seq) {
 	return
 }
 
-func ExampleBig() {
-	big := x8192(list.New("foo"))
-	fmt.Println(big.Len())
-	// Output:
-	// 8192
-}
-
-/*func TestVeryBig(t *testing.T) {
-	big := x8192(list.New("foo"))
-	vBig := x8192(big)
-	if vBig.Len() != 8192*8192 {
-		t.FailNow()
-	}
-}*/
-
 func BenchmarkIntsIsEmpty(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		ints.IsEmpty()
 	}
-}
-
-func ExampleJoin() {
-	var buf bytes.Buffer
-	strings.Join("|", &buf)
-	buf.WriteString("\n")
-	ints.Join(" <--> ", &buf)
-	fmt.Println(buf.String())
-	// Output:
-	// one|two|three|four
-	// 1 <--> 2 <--> 3
-}
-
-func ExampleMap() {
-	fmt.Println(ints.Map(func(item interface{}) interface{} {
-		i := item.(int)
-		return i * i
-	}))
-	// Output:
-	// [1,4,9]
 }
 
 func ExampleFilter() {

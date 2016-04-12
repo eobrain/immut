@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/eobrain/immut"
+	"io"
 )
 
 // Create a new list containing the arguments.
@@ -26,6 +27,15 @@ func New(item ...interface{}) immut.Seq {
 		return empty{}
 	}
 	return slice(item)
+}
+
+// Create a new slice containing n repeats of x
+func Repeat(n int, x interface{}) immut.Seq {
+	result := make([]interface{}, n)
+	for i := 0; i < n; i++ {
+		result[i] = x
+	}
+	return slice(result)
 }
 
 // Everything below here is private
@@ -81,14 +91,13 @@ func (xs slice) Do(f func(interface{})) {
 func (empty) Do(f func(interface{})) {}
 
 // O(n)
-func (xs slice) Join(sep string, buf *bytes.Buffer) {
-	buf.WriteString(fmt.Sprintf("%v", xs[0]))
+func (xs slice) Join(sep string, out io.Writer) {
+	fmt.Fprintf(out, "%v", xs[0])
 	for _, x := range xs[1:] {
-		buf.WriteString(sep)
-		buf.WriteString(fmt.Sprintf("%v", x))
+		fmt.Fprintf(out, "%s%v", sep, x)
 	}
 }
-func (empty) Join(string, *bytes.Buffer) {}
+func (empty) Join(string, io.Writer) {}
 
 func (xs slice) Reverse() immut.Seq {
 	n := len(xs)

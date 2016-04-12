@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/eobrain/immut"
+	"io"
 )
 
 // Create a new list containing the arguments.
@@ -26,6 +27,15 @@ func New(item ...interface{}) immut.Seq {
 		return empty{}
 	}
 	return &cons{item[0], New(item[1:]...)}
+}
+
+// Create a new list containing n repeats of x
+func Repeat(n int, x interface{}) (result immut.Seq) {
+	result = empty{}
+	for i := 0; i < n; i++ {
+		result = &cons{x, result}
+	}
+	return result
 }
 
 // Everything below here is private
@@ -93,15 +103,15 @@ func (xs *cons) Do(f func(interface{})) {
 func (empty) Do(f func(interface{})) {}
 
 // O(n)
-func (xs *cons) Join(sep string, buf *bytes.Buffer) {
+func (xs *cons) Join(sep string, out io.Writer) {
 	xs.check()
-	buf.WriteString(fmt.Sprintf("%v", xs.first))
+	fmt.Fprintf(out, "%v", xs.first)
 	if !xs.rest.IsEmpty() {
-		buf.WriteString(sep)
-		xs.rest.Join(sep, buf)
+		fmt.Fprint(out, sep)
+		xs.rest.Join(sep, out)
 	}
 }
-func (empty) Join(string, *bytes.Buffer) {}
+func (empty) Join(string, io.Writer) {}
 
 func (xs *cons) Reverse() immut.Seq {
 	xs.check()
@@ -174,7 +184,3 @@ func (xs *cons) Items() (ys []interface{}) {
 	return
 }
 func (empty) Items() []interface{} { return []interface{}{} }
-
-//func (xs *cons) addTreeNode(x interface{}, itemS string) *tree {
-//	return null{}.addTreeNode(x, itemS)
-//}

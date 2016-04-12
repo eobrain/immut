@@ -4,6 +4,7 @@ package immut
 
 import (
 	"bytes"
+	"io"
 )
 
 // Copyright 2013 Eamonn O'Brien-Strain
@@ -43,7 +44,7 @@ type Seq interface {
 
 	// Join writes a concatenation of the string representations
 	// of the items separated by sep into the Writer.
-	Join(string, *bytes.Buffer)
+	Join(string, io.Writer)
 
 	// AddFront returns a new seq with the item unshifted on to the beginning.
 	AddFront(interface{}) Seq

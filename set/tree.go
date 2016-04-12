@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/eobrain/immut"
+	"io"
 )
 
 // Note, no attempt to keep this binary tree balanced
@@ -118,18 +119,18 @@ func (xs *Tree) Do(f func(interface{})) {
 func (Empty) Do(f func(interface{})) {}
 
 // O(n)
-func (xs *Tree) Join(sep string, buf *bytes.Buffer) {
+func (xs *Tree) Join(sep string, out io.Writer) {
 	if !xs.left.IsEmpty() {
-		xs.left.Join(sep, buf)
-		buf.WriteString(sep)
+		xs.left.Join(sep, out)
+		fmt.Fprint(out, sep)
 	}
-	buf.WriteString(xs.valueS)
+	fmt.Fprint(out, xs.valueS)
 	if !xs.right.IsEmpty() {
-		buf.WriteString(sep)
-		xs.right.Join(sep, buf)
+		fmt.Fprint(out, sep)
+		xs.right.Join(sep, out)
 	}
 }
-func (Empty) Join(string, *bytes.Buffer) {}
+func (Empty) Join(string, io.Writer) {}
 
 //func (xs *Tree) Join(sep string) string {
 //	var buf bytes.Buffer

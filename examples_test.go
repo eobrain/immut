@@ -6,6 +6,7 @@ import (
 	"github.com/eobrain/immut/list"
 	"github.com/eobrain/immut/set"
 	"github.com/eobrain/immut/slice"
+	"os"
 )
 
 func ExampleIsEmpty() {
@@ -35,9 +36,11 @@ func ExampleLen() {
 		list.New(1, 2, 3),
 		slice.New(),
 		slice.New(1, 2, 3),
+		slice.Repeat(1000000, "foo"),
 		set.New(),
 		set.New(1, 2, 3),
 		list.New(make([]interface{}, 999)...),
+		list.Repeat(1000000, "foo"),
 	}
 	for _, xs := range seqs {
 		fmt.Println(xs.Len())
@@ -47,9 +50,11 @@ func ExampleLen() {
 	// 3
 	// 0
 	// 3
+	// 1000000
 	// 0
 	// 3
 	// 999
+	// 1000000
 }
 
 func ExampleFront() {
@@ -308,4 +313,97 @@ func ExampleDo() {
 	// 4
 	// 900
 	// 1600
+}
+
+func ExampleJoin_list() {
+	strings := list.New("one", "two", "three", "four")
+	strings.Join("|", os.Stdout)
+	fmt.Println()
+
+	ints := list.New(1, 2, 3)
+	ints.Join(" <--> ", os.Stdout)
+	fmt.Println()
+
+	// Output:
+	// one|two|three|four
+	// 1 <--> 2 <--> 3
+}
+
+func ExampleJoin_slice() {
+	strings := slice.New("one", "two", "three", "four")
+	strings.Join("|", os.Stdout)
+	fmt.Println()
+
+	ints := slice.New(1, 2, 3)
+	ints.Join(" <--> ", os.Stdout)
+	fmt.Println()
+
+	// Output:
+	// one|two|three|four
+	// 1 <--> 2 <--> 3
+}
+
+func ExampleJoin_set() {
+	strings := set.New("one", "two", "three", "four")
+	strings.Join("|", os.Stdout)
+	fmt.Println()
+
+	ints := set.New(1, 2, 3)
+	ints.Join(" <--> ", os.Stdout)
+	fmt.Println()
+
+	// Output:
+	// four|one|three|two
+	// 1 <--> 2 <--> 3
+}
+
+func Example_sort() {
+	fmt.Println(set.New(333, 111, 222))
+	fmt.Println(set.New(3, 11, 222))
+	fmt.Println(set.New(4, 900, 1600))
+
+	// Output
+	// {111,222,333}
+	// {11,222,3}
+	// {1600,4,900}
+}
+
+func ExampleMap_integers() {
+	slice := slice.New(2, 30, 40)
+	list := list.New(2, 30, 40)
+	set := set.New(2, 30, 40)
+
+	square := func(item interface{}) interface{} {
+		i := item.(int)
+		return i * i
+	}
+
+	fmt.Println(slice.Map(square))
+	fmt.Println(list.Map(square))
+
+	// TODO(eob) Fix this. set.Map results in unsorted set
+	fmt.Println(set.Map(square)) // sort alphabetically, not numerically
+
+	// Output:
+	// [4,900,1600]
+	// [4,900,1600]
+	// {1600,4,900}
+}
+func ExampleMap_strings() {
+	slice := slice.New("BBB", "AAA", "CCC")
+	list := list.New("BBB", "AAA", "CCC")
+	set := set.New("BBB", "AAA", "CCC")
+
+	constant := func(item interface{}) interface{} { return "foo" }
+
+	fmt.Println(slice.Map(constant))
+	fmt.Println(list.Map(constant))
+
+	// TODO(eob) Fix this. set.Map results repeates in set
+	fmt.Println(set.Map(constant)) // set semantics: just one element
+
+	// Output:
+	// [foo,foo,foo]
+	// [foo,foo,foo]
+	// {foo}
 }
