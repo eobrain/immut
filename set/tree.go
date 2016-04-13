@@ -229,13 +229,7 @@ func (xs *Tree) Forall(f func(interface{}) bool) bool {
 func (Empty) Forall(f func(interface{}) bool) bool { return true }
 
 func (xs *Tree) Map(f func(interface{}) interface{}) immut.Seq {
-	mappedValue := f(xs.value)
-	mappedValueS := s(mappedValue)
-	return &Tree{
-		mappedValue,
-		mappedValueS,
-		xs.left.Map(f),
-		xs.right.Map(f)}
+	return New(f(xs.value)).AddAll(xs.left.Map(f)).AddAll(xs.right.Map(f))
 }
 func (n Empty) Map(f func(interface{}) interface{}) immut.Seq { return n }
 
