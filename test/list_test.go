@@ -63,34 +63,3 @@ func BenchmarkIntsIsEmpty(b *testing.B) {
 		ints.IsEmpty()
 	}
 }
-
-func ExampleFilter() {
-	fmt.Println(ints.Filter(func(item interface{}) bool {
-		i := item.(int)
-		return i%2 == 1
-	}))
-	// Output:
-	// [1,3]
-}
-
-// For below see http://java.ociweb.com/mark/clojure/article.html
-
-func ExampleCount() {
-	fmt.Println(list.New(19, "yellow", true).Len())
-	// Output:
-	// 3
-}
-
-func ExampleReverse() {
-	fmt.Println(list.New(2, 4, 7).Reverse())
-	// Output:
-	// [7,4,2]
-}
-
-func ExampleMap2() {
-	fmt.Println(list.New(2, 4, 7).Map(func(x interface{}) interface{} {
-		return x.(int) + 3
-	}))
-	// Output:
-	// [5,7,10]
-}

@@ -58,7 +58,6 @@ func ExampleLen() {
 }
 
 func ExampleFront() {
-
 	seqs := []immut.Seq{
 		list.New(),
 		list.New(3, 2, 1),
@@ -79,6 +78,29 @@ func ExampleFront() {
 	// 3 <nil>
 	// <nil> getting Front of empty seq
 	// 1 <nil>
+}
+
+func ExampleRest() {
+	seqs := []immut.Seq{
+		list.New(),
+		list.New(3, 2, 1),
+		slice.New(),
+		slice.New(3, 2, 1),
+		set.New(),
+		set.New(3, 2, 1),
+	}
+
+	for _, xs := range seqs {
+		fmt.Println(xs.Rest())
+	}
+
+	// Output:
+	// <nil> getting Rest of empty seq
+	// [2,1] <nil>
+	// <nil> getting Rest of empty seq
+	// [2,1] <nil>
+	// <nil> getting Rest of empty seq
+	// {2,3} <nil>
 }
 
 func ExampleFront_list() {
@@ -259,9 +281,38 @@ func ExampleAddAll_set() {
 	strings := set.New("one", "two", "three", "four")
 	fmt.Println(ints.AddAll(strings))
 	fmt.Println(strings.AddAll(ints))
+
+	fmt.Println(ints.AddAll(strings))
+	fmt.Println(strings.AddAll(ints))
+	fmt.Println(
+		set.New("a", "b", "c", "e", "d", "f", "g", "h").AddAll(set.New("X")))
+	fmt.Println(
+		set.New("X").AddAll(set.New("a", "b", "c", "d", "e", "g", "f", "h")))
+	fmt.Println(
+		set.New("a", "b", "c", "d", "e", "f", "g", "h").AddAll(set.New("X", "Y")))
+	fmt.Println(
+		set.New("X", "Y").AddAll(set.New("a", "b", "c", "d", "e", "f", "g", "h")))
+	fmt.Println(
+		set.New("a", "b", "c", "d", "e", "f", "g", "h").AddAll(set.New("X", "Y")))
+	fmt.Println(
+		set.New("X", "Y").AddAll(set.New("a", "b", "c", "d", "e", "f", "g", "h")))
+	fmt.Println(
+		set.New("a", "b", "c", "d", "e", "f", "g", "h").AddAll(set.New("X", "Y", "Z")))
+	fmt.Println(
+		set.New("X", "Y", "Z").AddAll(set.New("a", "b", "c", "d", "e", "f", "g", "h")))
 	// Output:
 	// {1,2,3,four,one,three,two}
 	// {1,2,3,four,one,three,two}
+	// {1,2,3,four,one,three,two}
+	// {1,2,3,four,one,three,two}
+	// {X,a,b,c,d,e,f,g,h}
+	// {X,a,b,c,d,e,f,g,h}
+	// {X,Y,a,b,c,d,e,f,g,h}
+	// {X,Y,a,b,c,d,e,f,g,h}
+	// {X,Y,a,b,c,d,e,f,g,h}
+	// {X,Y,a,b,c,d,e,f,g,h}
+	// {X,Y,Z,a,b,c,d,e,f,g,h}
+	// {X,Y,Z,a,b,c,d,e,f,g,h}
 }
 
 func ExampleAddFront() {
@@ -276,6 +327,31 @@ func ExampleAddFront() {
 	// [iiiii,one,two,three,four]
 	// {four,iiiii,one,three,two}
 }
+
+func ExampleAddFront_set() {
+	ints := set.New(1, 2, 3)
+
+	fmt.Println(set.New(1).AddFront(2))
+	fmt.Println(set.New(2).AddFront(1))
+	fmt.Println(set.New("aaa").AddFront("bbb"))
+	fmt.Println(set.New("bbb").AddFront("aaa"))
+	fmt.Println(ints.AddFront(1))
+	fmt.Println(ints.AddFront(2))
+	fmt.Println(ints.AddFront(3))
+	fmt.Println(ints.AddFront(0))
+	fmt.Println(ints.AddFront(4))
+	// Output:
+	// {1,2}
+	// {1,2}
+	// {aaa,bbb}
+	// {aaa,bbb}
+	// {1,2,3}
+	// {1,2,3}
+	// {1,2,3}
+	// {0,1,2,3}
+	// {1,2,3,4}
+}
+
 func ExampleAddBack() {
 	slice := slice.New("one", "two", "three", "four")
 	list := list.New("one", "two", "three", "four")
@@ -380,8 +456,6 @@ func ExampleMap_integers() {
 
 	fmt.Println(slice.Map(square))
 	fmt.Println(list.Map(square))
-
-	// TODO(eob) Fix this. set.Map results in unsorted set
 	fmt.Println(set.Map(square)) // sort alphabetically, not numerically
 
 	// Output:
@@ -389,6 +463,7 @@ func ExampleMap_integers() {
 	// [4,900,1600]
 	// {1600,4,900}
 }
+
 func ExampleMap_strings() {
 	slice := slice.New("BBB", "AAA", "CCC")
 	list := list.New("BBB", "AAA", "CCC")
@@ -398,12 +473,110 @@ func ExampleMap_strings() {
 
 	fmt.Println(slice.Map(constant))
 	fmt.Println(list.Map(constant))
-
-	// TODO(eob) Fix this. set.Map results repeates in set
 	fmt.Println(set.Map(constant)) // set semantics: just one element
 
 	// Output:
 	// [foo,foo,foo]
 	// [foo,foo,foo]
 	// {foo}
+}
+
+func ExampleFilter_integers() {
+	slice := slice.New(2, 30, 40)
+	list := list.New(2, 30, 40)
+	set := set.New(2, 30, 40)
+
+	endsWithZero := func(item interface{}) bool {
+		i := item.(int)
+		return i%10 == 0
+	}
+
+	fmt.Println(slice.Filter(endsWithZero))
+	fmt.Println(list.Filter(endsWithZero))
+	fmt.Println(set.Filter(endsWithZero))
+
+	// Output:
+	// [30,40]
+	// [30,40]
+	// {30,40}
+}
+
+func ExampleFilter_strings() {
+	slice := slice.New("BBB", "AAA", "CCCCC")
+	list := list.New("BBB", "AAA", "CCCCC")
+	set := set.New("BBB", "AAA", "CCCCC")
+
+	isTriple := func(item interface{}) bool { return len(item.(string)) == 3 }
+
+	fmt.Println(slice.Filter(isTriple))
+	fmt.Println(list.Filter(isTriple))
+	fmt.Println(set.Filter(isTriple))
+
+	// Output:
+	// [BBB,AAA]
+	// [BBB,AAA]
+	// {AAA,BBB}
+}
+
+func Example_list() {
+	// Ported from http://java.ociweb.com/mark/clojure/article.html#Collections
+
+	count := list.New(19, "yellow", true).Len()
+
+	reverse := list.New(2, 4, 7).Reverse()
+
+	mapped := list.New(2, 4, 7).Map(func(x interface{}) interface{} {
+		return x.(int) + 3
+	})
+
+	fmt.Println(count)
+	fmt.Println(reverse)
+	fmt.Println(mapped)
+
+	// Output:
+	// 3
+	// [7,4,2]
+	// [5,7,10]
+}
+
+func Example_slice() {
+	// Ported from http://java.ociweb.com/mark/clojure/article.html#Collections
+
+	count := slice.New(19, "yellow", true).Len()
+
+	reverse := slice.New(2, 4, 7).Reverse()
+
+	mapped := slice.New(2, 4, 7).Map(func(x interface{}) interface{} {
+		return x.(int) + 3
+	})
+
+	fmt.Println(count)
+	fmt.Println(reverse)
+	fmt.Println(mapped)
+
+	// Output:
+	// 3
+	// [7,4,2]
+	// [5,7,10]
+}
+
+func Example_set() {
+	// Ported from http://java.ociweb.com/mark/clojure/article.html#Collections
+
+	count := set.New(19, "yellow", true).Len()
+
+	reverse := set.New(2, 4, 7).Reverse()
+
+	mapped := set.New(2, 4, 7).Map(func(x interface{}) interface{} {
+		return x.(int) + 3
+	})
+
+	fmt.Println(count)
+	fmt.Println(reverse)
+	fmt.Println(mapped)
+
+	// Output:
+	// 3
+	// {2,4,7}
+	// {10,5,7}
 }
