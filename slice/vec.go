@@ -125,15 +125,11 @@ func (xs slice) Reverse() immut.Seq {
 }
 func (n empty) Reverse() immut.Seq { return n }
 
-func (xs slice) AddFront(x interface{}) immut.Seq {
-	return slice(append([]interface{}{x}, xs...))
-}
-func (empty) AddFront(item interface{}) immut.Seq { return New(item) }
+func (xs slice) AddFront(x interface{}) immut.Seq { return append(slice{x}, xs...) }
+func (empty) AddFront(x interface{}) immut.Seq    { return slice{x} }
 
-func (xs slice) AddBack(x interface{}) immut.Seq {
-	return slice(append(xs.Items(), x))
-}
-func (n empty) AddBack(item interface{}) immut.Seq { return New(item) }
+func (xs slice) AddBack(x interface{}) immut.Seq { return append(slice(xs.Items()), x) }
+func (n empty) AddBack(x interface{}) immut.Seq  { return slice{x} }
 
 func (xs slice) AddAll(that immut.Seq) immut.Seq {
 	return slice(append(xs.Items(), that.Items()...))
@@ -181,18 +177,16 @@ func (xs slice) String() string {
 func (empty) String() string { return "[]" }
 
 func (xs slice) Remove(match interface{}) immut.Seq {
-	result := []interface{}{}
+	result := slice{}
 	for _, x := range xs {
 		if x != match {
 			result = append(result, x)
 		}
 	}
-	return slice(result)
+	return result
 }
+func (n empty) Remove(interface{}) immut.Seq { return n }
 
-func (n empty) Remove(x interface{}) immut.Seq {
-	return n
-}
 func (xs slice) Items() (ys []interface{}) {
 	ys = make([]interface{}, xs.Len())
 	copy(ys, xs)

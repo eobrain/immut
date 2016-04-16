@@ -30,6 +30,12 @@ func BenchmarkFront(b *testing.B) {
 	}
 }
 
+func BenchmarkRest(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		seq.Rest()
+	}
+}
+
 func BenchmarkBack(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		seq.Back()
