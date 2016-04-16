@@ -63,9 +63,7 @@ func (xs *Tree) buildTreeFrom(remaining []interface{}) *Tree {
 	return xs.addTreeNode(x, s(x)).buildTreeFrom(remaining[1:])
 }
 
-func s(x interface{}) string {
-	return fmt.Sprintf("%v", x)
-}
+func s(x interface{}) string { return fmt.Sprintf("%v", x) }
 
 // O(log n)
 func (xs *Tree) Len() int {
@@ -74,19 +72,16 @@ func (xs *Tree) Len() int {
 func (Empty) Len() int { return 0 }
 
 // O(log n)
-func (xs *Tree) Get(i int) (interface{}, error) {
-	if i < 0 {
-		return nil, fmt.Errorf("index %d is negative", i)
-	}
+func (xs *Tree) Get(i int) (interface{}, bool) {
 	if i == 0 {
-		return xs.Front()
+		return xs.Front(), true
 	}
-	rest, _ := xs.Rest() // guaranteed not to be an error
-	return rest.Get(i - 1)
+	if i < 0 {
+		return nil, false
+	}
+	return xs.Rest().Get(i - 1)
 }
-func (Empty) Get(i int) (interface{}, error) {
-	return nil, fmt.Errorf("Index is %d beyond end of seq", i)
-}
+func (Empty) Get(i int) (interface{}, bool) { return nil, false }
 
 // O(log n)
 func (xs *Tree) Contains(x interface{}) bool {
@@ -98,38 +93,33 @@ func (xs *Tree) Contains(x interface{}) bool {
 func (Empty) Contains(interface{}) bool { return false }
 
 // O(log n)
-func (xs *Tree) Front() (interface{}, error) {
+func (xs *Tree) Front() interface{} {
 	if xs.left.IsEmpty() {
-		return xs.value, nil
+		return xs.value
 	}
 	return xs.left.Front()
 }
-func (Empty) Front() (interface{}, error) {
-	return nil, fmt.Errorf("getting Front of empty seq")
-}
+func (Empty) Front() interface{} { panic("getting Front of empty seq") }
 
 // O(log(n))
-func (xs *Tree) Back() (interface{}, error) {
+func (xs *Tree) Back() interface{} {
 	if xs.right.IsEmpty() {
-		return xs.value, nil
+		return xs.value
 	}
 	return xs.right.Back()
 }
-func (Empty) Back() (interface{}, error) {
-	return nil, fmt.Errorf("getting Back of empty seq")
-}
+func (Empty) Back() interface{} { panic("getting Back of empty seq") }
 
 // O(n^2 * log(n))
-func (xs *Tree) Rest() (immut.Seq, error) {
+func (xs *Tree) Rest() immut.Seq {
 	if xs.left.IsEmpty() {
-		return xs.right, nil
+		return xs.right
 	}
 	// Perhaps not most efficient
-	leftRest, _ := xs.left.Rest() // guaranteed not empty
-	return leftRest.AddFront(xs.value).AddAll(xs.right), nil
+	return xs.left.Rest().AddFront(xs.value).AddAll(xs.right)
 }
-func (Empty) Rest() (immut.Seq, error) {
-	return nil, fmt.Errorf("getting Rest of empty seq")
+func (Empty) Rest() immut.Seq {
+	panic("getting Rest of empty seq")
 }
 
 // O(1)
@@ -188,7 +178,7 @@ func (Empty) Join(string, io.Writer) {}
 */
 //}
 
-/// O(log n)
+// O(log n)
 func (xs *Tree) addTreeNode(x interface{}, itemS string) *Tree {
 	if x == xs.value {
 		//set semantics -- cannnot have more than one of any value
@@ -226,10 +216,8 @@ func asTreeNode(xs immut.Seq) treeNode {
 }
 
 // Cannot reverse a sorted set, so just return the set itself
-func (xs *Tree) Reverse() immut.Seq {
-	return xs
-}
-func (n Empty) Reverse() immut.Seq { return n }
+func (xs *Tree) Reverse() immut.Seq { return xs }
+func (n Empty) Reverse() immut.Seq  { return n }
 
 // O(log n)
 func (xs *Tree) AddFront(x interface{}) immut.Seq {
@@ -246,13 +234,10 @@ func (n Empty) AddBack(item interface{}) immut.Seq { return New(item) }
 // O(n*log(n))
 func (xs *Tree) AddAll(that immut.Seq) immut.Seq {
 	//fmt.Printf("[%d].AddAll([%d])\n", xs.Len(), that.Len())
-	first, err := that.Front()
-	if err != nil {
-		//that is empty
+	if that.IsEmpty() {
 		return xs
 	}
-	rest, _ := that.Rest() //error guaranteed to be non nil TODO: add tests for Rest
-	return xs.AddFront(first).AddAll(rest)
+	return xs.AddFront(that.Front()).AddAll(that.Rest())
 	//TODO, avoid xs creating very unbalanced trees
 }
 func (n Empty) AddAll(other immut.Seq) immut.Seq { return other }
@@ -306,10 +291,7 @@ func (Empty) String() string { return "{}" }
 func (xs *Tree) Remove(match interface{}) immut.Seq {
 	return xs.Filter(func(x interface{}) bool { return x != match })
 }
-
-func (n Empty) Remove(x interface{}) immut.Seq {
-	return n
-}
+func (n Empty) Remove(x interface{}) immut.Seq { return n }
 
 func (xs *Tree) Items() (ys []interface{}) {
 	ys = make([]interface{}, xs.Len())

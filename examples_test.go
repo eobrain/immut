@@ -59,11 +59,8 @@ func ExampleLen() {
 
 func ExampleFront() {
 	seqs := []immut.Seq{
-		list.New(),
 		list.New(3, 2, 1),
-		slice.New(),
 		slice.New(3, 2, 1),
-		set.New(),
 		set.New(3, 2, 1),
 	}
 
@@ -72,18 +69,18 @@ func ExampleFront() {
 	}
 
 	// Output:
-	// <nil> getting Front of empty seq
-	// 3 <nil>
-	// <nil> getting Front of empty seq
-	// 3 <nil>
-	// <nil> getting Front of empty seq
-	// 1 <nil>
+	// 3
+	// 3
+	// 1
 }
 
 func ExampleGet() {
 	seqs := []immut.Seq{
-		list.New(4, 3, 2, 1),
+		slice.New(4),
 		slice.New(4, 3, 2, 1),
+		list.New(4),
+		list.New(4, 3, 2, 1),
+		set.New(4),
 		set.New(4, 3, 2, 1),
 	}
 
@@ -91,19 +88,19 @@ func ExampleGet() {
 		fmt.Println(xs.Get(2))
 	}
 
-	// Output:
-	// 2 <nil>
-	// 2 <nil>
-	// 3 <nil>
+	// Output
+	// false
+	// 2 true
+	// false
+	// 2 true
+	// false
+	// 3 true
 }
 
 func ExampleRest() {
 	seqs := []immut.Seq{
-		list.New(),
 		list.New(3, 2, 1),
-		slice.New(),
 		slice.New(3, 2, 1),
-		set.New(),
 		set.New(3, 2, 1),
 	}
 
@@ -112,90 +109,69 @@ func ExampleRest() {
 	}
 
 	// Output:
-	// <nil> getting Rest of empty seq
-	// [2,1] <nil>
-	// <nil> getting Rest of empty seq
-	// [2,1] <nil>
-	// <nil> getting Rest of empty seq
-	// {2,3} <nil>
+	// [2,1]
+	// [2,1]
+	// {2,3}
 }
 
 func ExampleFront_list() {
 	stooges := list.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Front())
 	// Output:
-	// Larry <nil>
-}
-
-func ExampleSecond_list() {
-	stooges := list.New("Larry", "Shemp", "Moe", "Curly")
-	fmt.Println(immut.Second(stooges))
-	// Shemp <nil>
+	// Larry
 }
 
 func ExampleBack_list() {
 	stooges := list.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Back())
-	// Curly <nil>
+	// Curly
 }
 
 func ExampleGet_list() {
 	stooges := list.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Get(2))
 	// Output:
-	// Moe <nil>
+	// Moe true
 }
 
 func ExampleFront_slice() {
 	stooges := slice.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Front())
 	// Output:
-	// Larry <nil>
-}
-
-func ExampleSecond_slice() {
-	stooges := slice.New("Larry", "Shemp", "Moe", "Curly")
-	fmt.Println(immut.Second(stooges))
-	// Shemp <nil>
+	// Larry
 }
 
 func ExampleBack_slice() {
 	stooges := slice.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Back())
-	// Curly <nil>
+	// Curly
 }
 
 func ExampleGet_slice() {
 	stooges := slice.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Get(2))
 	// Output:
-	// Moe <nil>
+	// Moe true
 }
 
 func ExampleFront_set() {
 	stooges := set.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Front()) // get first alphabetically
 	// Output:
-	// Curly <nil>
-}
-
-func ExampleSecond_set() {
-	stooges := set.New("Larry", "Shemp", "Moe", "Curly")
-	fmt.Println(immut.Second(stooges)) // get second alphabetically
-	// Larry <nil>
+	// Curly
 }
 
 func ExampleBack_set() {
 	stooges := set.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Back()) // get last alphabetically
-	// Shemp <nil>
+	// Shemp
 }
 
 func ExampleGet_set() {
 	stooges := set.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Get(2)) // get third alphabetically
 	// Output:
-	// Moe <nil>
+	// Moe true
 }
 
 func ExampleRemove_list() {

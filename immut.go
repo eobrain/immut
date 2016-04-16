@@ -27,20 +27,24 @@ type Seq interface {
 	// Len is the number of elements.
 	Len() int
 
-	// Get returns the ith element in the sequence
-	Get(i int) (interface{}, error)
+	// Get returns the ith element in the sequence.
+	// Sets false if index out of range.
+	Get(i int) (interface{}, bool)
 
 	// Contains is whether the item is in the Seq.
 	Contains(interface{}) bool
 
 	// Front returns the first item.
-	Front() (interface{}, error)
+	// Panics if called on an empty seq.
+	Front() interface{}
 
 	// Back returns the last item.
-	Back() (interface{}, error)
+	// Panics if called on an empty seq.
+	Back() interface{}
 
-	// Rest returns new list with all except the first item.
-	Rest() (Seq, error)
+	// Rest returns new seq with all except the first item.
+	// Panics if called on an empty seq.
+	Rest() Seq
 
 	// IsEmpty is whether this is the empty seq.
 	IsEmpty() bool
@@ -84,15 +88,6 @@ type Seq interface {
 
 	//return a newly created slice with all stored items
 	Items() []interface{}
-}
-
-// Return second item in sequence.
-func Second(xs Seq) (interface{}, error) {
-	rest, err := xs.Rest()
-	if err != nil {
-		return nil, err
-	}
-	return rest.Front()
 }
 
 // Return a string formed by concatenation of the string

@@ -28,8 +28,8 @@ func p(x ...interface{}) {
 	fmt.Println(x...)
 }
 
-func str(xs interface{}, err error) string {
-	return fmt.Sprintf("%v,%v", xs, err)
+func str(xs interface{}, ok bool) string {
+	return fmt.Sprintf("%v,%v", xs, ok)
 }
 
 func TestNth(t *testing.T) {
@@ -41,7 +41,7 @@ func TestNth(t *testing.T) {
 		list.New(19, "yellow", true),
 		list.New(2, 4, 7),
 		list.New(2, 4),
-		// list.New(2),
+		list.New(2),
 		list.New("Moe", "Larry", "Curly", "Shemp"),
 		// emptyA,
 		intsA,
@@ -50,7 +50,7 @@ func TestNth(t *testing.T) {
 		slice.New(19, "yellow", true),
 		slice.New(2, 4, 7),
 		slice.New(2, 4),
-		// slice.New(2),
+		slice.New(2),
 		slice.New("Moe", "Larry", "Curly", "Shemp"),
 		// emptySet,
 		intsSet,
@@ -59,14 +59,16 @@ func TestNth(t *testing.T) {
 		intsSet.AddAll(stringsSet),
 		set.New("X", "Y", "Z").AddAll(set.New("a", "b", "c", "d", "e", "f", "g", "h")),
 		set.New(1, 2),
-		// set.New(1),
+		set.New(1),
 	}
 	for i, xs := range seqs {
-		if a, b := str(xs.Get(0)), str(xs.Front()); a != b {
-			t.Errorf("%d: %s != %s", i, a, b)
+		get0, ok := xs.Get(0)
+		if !ok {
+			t.Errorf("%d: unexpected false", i)
 		}
-		if a, b := str(xs.Get(1)), str(immut.Second(xs)); a != b {
-			t.Errorf("%d: %s != %s", i, a, b)
+		front := xs.Front()
+		if get0 != front {
+			t.Errorf("%d: %s != %s", i, get0, front)
 		}
 	}
 }
@@ -81,13 +83,13 @@ func findAddsTo10(data immut.Seq) (int, int, error) {
 	var loop func(int, int) (int, int, error)
 	loop = func(indexSum, i int) (int, int, error) {
 		j := indexSum - i
-		di, err := data.Get(i)
-		if err != nil {
-			log.Fatalf("Nth(%v,%v) -> %v, %v", data, i, di, err)
+		di, ok := data.Get(i)
+		if !ok {
+			log.Fatalf("Nth(%v,%v) -> %v, false", data, i, di)
 		}
-		dj, err := data.Get(j)
-		if err != nil {
-			panic(err)
+		dj, ok := data.Get(j)
+		if !ok {
+			panic("unexpected false")
 		}
 
 		if di.(int)+dj.(int) == 10 {

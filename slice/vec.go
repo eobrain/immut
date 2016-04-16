@@ -50,18 +50,13 @@ func (xs slice) Len() int {
 func (empty) Len() int { return 0 }
 
 // O(1)
-func (xs slice) Get(i int) (interface{}, error) {
-	if i < 0 {
-		return nil, fmt.Errorf("index %d is negativr", i, len(xs)-1)
+func (xs slice) Get(i int) (interface{}, bool) {
+	if i < 0 || i >= len(xs) {
+		return nil, false
 	}
-	if i >= len(xs) {
-		return nil, fmt.Errorf("index %d is not less than length %d]", i, len(xs))
-	}
-	return xs[i], nil
+	return xs[i], true
 }
-func (empty) Get(i int) (interface{}, error) {
-	return nil, fmt.Errorf("getting element of empty seq")
-}
+func (empty) Get(i int) (interface{}, bool) { return nil, false }
 
 // O(n)
 func (xs slice) Contains(x interface{}) bool {
@@ -75,30 +70,20 @@ func (xs slice) Contains(x interface{}) bool {
 func (empty) Contains(interface{}) bool { return false }
 
 // O(1)
-func (xs slice) Front() (interface{}, error) {
-	return xs[0], nil
-}
-func (empty) Front() (interface{}, error) {
-	return nil, fmt.Errorf("getting Front of empty seq")
-}
+func (xs slice) Front() interface{} { return xs[0] }
+func (empty) Front() interface{}    { panic("getting Front of empty seq") }
 
 // O(1)
-func (xs slice) Back() (interface{}, error) {
-	return xs[len(xs)-1], nil
-}
-func (empty) Back() (interface{}, error) {
-	return nil, fmt.Errorf("getting Back of empty seq")
-}
+func (xs slice) Back() interface{} { return xs[len(xs)-1] }
+func (empty) Back() interface{}    { panic("getting Back of empty seq") }
 
-func (xs slice) Rest() (immut.Seq, error) {
+func (xs slice) Rest() immut.Seq {
 	if len(xs) == 1 {
-		return empty{}, nil
+		return empty{}
 	}
-	return xs[1:], nil
+	return xs[1:]
 }
-func (empty) Rest() (immut.Seq, error) {
-	return nil, fmt.Errorf("getting Rest of empty seq")
-}
+func (empty) Rest() immut.Seq { panic("getting Rest of empty seq") }
 
 // O(1)
 func (slice) IsEmpty() bool { return false }
