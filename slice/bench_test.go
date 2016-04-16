@@ -42,6 +42,12 @@ func BenchmarkBack(b *testing.B) {
 	}
 }
 
+func BenchmarkLen(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		seq.Len()
+	}
+}
+
 func BenchmarkGet(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		seq.Get(50)
