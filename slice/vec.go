@@ -91,6 +91,15 @@ func (xs slice) Do(f func(interface{})) {
 func (empty) Do(f func(interface{})) {}
 
 // O(n)
+func (xs slice) DoBackwards(f func(interface{})) {
+	n := len(xs)
+	for i := range xs {
+		f(xs[n-i-1])
+	}
+}
+func (empty) DoBackwards(f func(interface{})) {}
+
+// O(n)
 func (xs slice) Join(sep string, out io.Writer) {
 	fmt.Fprintf(out, "%v", xs[0])
 	for _, x := range xs[1:] {
@@ -164,6 +173,19 @@ func (xs slice) String() string {
 }
 func (empty) String() string { return "[]" }
 
+func (xs slice) Remove(match interface{}) immut.Seq {
+	result := []interface{}{}
+	for _, x := range xs {
+		if x != match {
+			result = append(result, x)
+		}
+	}
+	return slice(result)
+}
+
+func (n empty) Remove(x interface{}) immut.Seq {
+	return n
+}
 func (xs slice) Items() (ys []interface{}) {
 	ys = make([]interface{}, xs.Len())
 	copy(ys, xs)

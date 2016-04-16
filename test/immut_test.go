@@ -28,18 +28,6 @@ func p(x ...interface{}) {
 	fmt.Println(x...)
 }
 
-func BenchmarkListRemove(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		immut.Remove(ints, 2)
-	}
-}
-
-func BenchmarkListRemoveA(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		immut.Remove(intsA, 2)
-	}
-}
-
 func str(xs interface{}, err error) string {
 	return fmt.Sprintf("%v,%v", xs, err)
 }

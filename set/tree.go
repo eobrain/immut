@@ -119,6 +119,14 @@ func (xs *Tree) Do(f func(interface{})) {
 func (Empty) Do(f func(interface{})) {}
 
 // O(n)
+func (xs *Tree) DoBackwards(f func(interface{})) {
+	xs.right.DoBackwards(f)
+	f(xs.value)
+	xs.left.DoBackwards(f)
+}
+func (Empty) DoBackwards(f func(interface{})) {}
+
+// O(n)
 func (xs *Tree) Join(sep string, out io.Writer) {
 	if !xs.left.IsEmpty() {
 		xs.left.Join(sep, out)
@@ -268,6 +276,14 @@ func (xs *Tree) String() string {
 	return buf.String()
 }
 func (Empty) String() string { return "{}" }
+
+func (xs *Tree) Remove(match interface{}) immut.Seq {
+	return xs.Filter(func(x interface{}) bool { return x != match })
+}
+
+func (n Empty) Remove(x interface{}) immut.Seq {
+	return n
+}
 
 func (xs *Tree) Items() (ys []interface{}) {
 	ys = make([]interface{}, xs.Len())

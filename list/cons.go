@@ -102,6 +102,13 @@ func (xs *cons) Do(f func(interface{})) {
 }
 func (empty) Do(f func(interface{})) {}
 
+// Do backwards
+func (xs *cons) DoBackwards(f func(interface{})) {
+	xs.rest.DoBackwards(f)
+	f(xs.first)
+}
+func (empty) DoBackwards(f func(interface{})) {}
+
 // O(n)
 func (xs *cons) Join(sep string, out io.Writer) {
 	xs.check()
@@ -172,6 +179,22 @@ func (xs *cons) String() string {
 	return buf.String()
 }
 func (empty) String() string { return "[]" }
+
+func (xs *cons) Remove(match interface{}) (result immut.Seq) {
+	if xs.first == match {
+		result = xs.rest.Remove(match)
+	} else {
+		if xs.rest.Contains(match) {
+			result = &cons{xs.first, xs.rest.Remove(match)}
+		} else {
+			result = xs
+		}
+	}
+	return
+}
+func (n empty) Remove(x interface{}) immut.Seq {
+	return n
+}
 
 func (xs *cons) Items() (ys []interface{}) {
 	xs.check()

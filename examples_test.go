@@ -185,15 +185,16 @@ func ExampleRemove_list() {
 	empty := list.New()
 	ints := list.New(1, 2, 3)
 	strings := list.New("one", "two", "three", "four")
-	fmt.Println(immut.Remove(empty, 33))
-	fmt.Println(immut.Remove(ints, 33))
-	fmt.Println(immut.Remove(ints, "foo"))
-	fmt.Println(immut.Remove(ints, 1))
-	fmt.Println(immut.Remove(ints, 2))
-	fmt.Println(immut.Remove(ints, 3))
-	fmt.Println(immut.Remove(strings, "one"))
-	fmt.Println(immut.Remove(strings, "two"))
-	fmt.Println(immut.Remove(strings, "four"))
+	fmt.Println(empty.Remove(33))
+	fmt.Println(ints.Remove(33))
+	fmt.Println(ints.Remove("foo"))
+	fmt.Println(ints.Remove(1))
+	fmt.Println(ints.Remove(2))
+	fmt.Println(ints.Remove(3))
+	fmt.Println(strings.Remove("one"))
+	fmt.Println(strings.Remove("two"))
+	fmt.Println(strings.Remove("three"))
+	fmt.Println(strings.Remove("four"))
 	// Output:
 	// []
 	// [1,2,3]
@@ -203,6 +204,7 @@ func ExampleRemove_list() {
 	// [1,2]
 	// [two,three,four]
 	// [one,three,four]
+	// [one,two,four]
 	// [one,two,three]
 }
 
@@ -210,15 +212,15 @@ func ExampleRemove_slice() {
 	empty := slice.New()
 	ints := slice.New(1, 2, 3)
 	strings := slice.New("one", "two", "three", "four")
-	fmt.Println(immut.Remove(empty, 33))
-	fmt.Println(immut.Remove(ints, 33))
-	fmt.Println(immut.Remove(ints, "foo"))
-	fmt.Println(immut.Remove(ints, 1))
-	fmt.Println(immut.Remove(ints, 2))
-	fmt.Println(immut.Remove(ints, 3))
-	fmt.Println(immut.Remove(strings, "one"))
-	fmt.Println(immut.Remove(strings, "two"))
-	fmt.Println(immut.Remove(strings, "four"))
+	fmt.Println(empty.Remove(33))
+	fmt.Println(ints.Remove(33))
+	fmt.Println(ints.Remove("foo"))
+	fmt.Println(ints.Remove(1))
+	fmt.Println(ints.Remove(2))
+	fmt.Println(ints.Remove(3))
+	fmt.Println(strings.Remove("one"))
+	fmt.Println(strings.Remove("two"))
+	fmt.Println(strings.Remove("four"))
 	// Output:
 	// []
 	// [1,2,3]
@@ -235,15 +237,16 @@ func ExampleRemove_set() {
 	empty := set.New()
 	ints := set.New(1, 2, 3)
 	strings := set.New("one", "two", "three", "four")
-	fmt.Println(immut.Remove(empty, 33))
-	fmt.Println(immut.Remove(ints, 33))
-	fmt.Println(immut.Remove(ints, "foo"))
-	fmt.Println(immut.Remove(ints, 1))
-	fmt.Println(immut.Remove(ints, 2))
-	fmt.Println(immut.Remove(ints, 3))
-	fmt.Println(immut.Remove(strings, "one"))
-	fmt.Println(immut.Remove(strings, "two"))
-	fmt.Println(immut.Remove(strings, "four"))
+	fmt.Println(empty.Remove(33))
+	fmt.Println(ints.Remove(33))
+	fmt.Println(ints.Remove("foo"))
+	fmt.Println(ints.Remove(1))
+	fmt.Println(ints.Remove(2))
+	fmt.Println(ints.Remove(3))
+	fmt.Println(strings.Remove("one"))
+	fmt.Println(strings.Remove("two"))
+	fmt.Println(strings.Remove("three"))
+	fmt.Println(strings.Remove("four"))
 	// Output:
 	// {}
 	// {1,2,3}
@@ -253,6 +256,7 @@ func ExampleRemove_set() {
 	// {1,2}
 	// {four,three,two}
 	// {four,one,three}
+	// {four,one,two}
 	// {one,three,two}
 }
 
@@ -389,6 +393,32 @@ func ExampleDo() {
 	// 4
 	// 900
 	// 1600
+}
+
+func ExampleDoBackwards() {
+	slice := slice.New(2, 30, 40)
+	list := list.New(2, 30, 40)
+	set := set.New(2, 30, 40)
+
+	printSquare := func(item interface{}) {
+		i := item.(int)
+		fmt.Println(i * i)
+	}
+
+	slice.DoBackwards(printSquare)
+	list.DoBackwards(printSquare)
+	set.DoBackwards(printSquare)
+
+	// Output:
+	// 1600
+	// 900
+	// 4
+	// 1600
+	// 900
+	// 4
+	// 1600
+	// 900
+	// 4
 }
 
 func ExampleJoin_list() {

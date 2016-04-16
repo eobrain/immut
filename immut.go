@@ -42,6 +42,9 @@ type Seq interface {
 	// Apply the function to each item in the seq.
 	Do(func(interface{}))
 
+	// Apply the function to each item in the seq, in reverse order.
+	DoBackwards(func(interface{}))
+
 	// Join writes a concatenation of the string representations
 	// of the items separated by sep into the Writer.
 	Join(string, io.Writer)
@@ -69,14 +72,12 @@ type Seq interface {
 	//function is true
 	Filter(func(interface{}) bool) Seq
 
+	// Return sequence resulting from removing the item, or the sequence
+	// itself if item not contained in it.
+	Remove(x interface{}) Seq
+
 	//return a newly created slice with all stored items
 	Items() []interface{}
-}
-
-// Return sequence resulting from removing the item, or the sequence
-// itself if item not contained in it.
-func Remove(xs Seq, x interface{}) Seq {
-	return xs.Filter(func(y interface{}) bool { return y != x })
 }
 
 // Return second item in sequence.
