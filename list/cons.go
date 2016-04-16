@@ -46,25 +46,28 @@ type cons struct {
 }
 type empty struct{}
 
-func (xs *cons) check() {
-	if xs == nil {
-		panic("nil cons")
-	}
-	if xs.rest == nil {
-		panic("nil rest")
-	}
-}
-
 // O(n)
 func (xs *cons) Len() int {
-	xs.check()
 	return 1 + xs.rest.Len()
 }
 func (empty) Len() int { return 0 }
 
 // O(n)
+func (xs *cons) Get(i int) (interface{}, error) {
+	if i < 0 {
+		return nil, fmt.Errorf("index %d is negative", i)
+	}
+	if i == 0 {
+		return xs.Front()
+	}
+	return xs.rest.Get(i - 1)
+}
+func (empty) Get(i int) (interface{}, error) {
+	return nil, fmt.Errorf("Index is %d beyond end of seq", i)
+}
+
+// O(n)
 func (xs *cons) Contains(x interface{}) bool {
-	xs.check()
 	return xs.first == x || xs.rest.Contains(x)
 	//TODO make this tail recursive
 }
@@ -72,16 +75,25 @@ func (empty) Contains(interface{}) bool { return false }
 
 // O(1)
 func (xs *cons) Front() (interface{}, error) {
-	xs.check()
 	return xs.first, nil
 }
 func (empty) Front() (interface{}, error) {
 	return nil, fmt.Errorf("getting Front of empty seq")
 }
 
+// O(n)
+func (xs *cons) Back() (interface{}, error) {
+	if xs.rest.IsEmpty() {
+		return xs.first, nil
+	}
+	return xs.rest.Back()
+}
+func (empty) Back() (interface{}, error) {
+	return nil, fmt.Errorf("getting Back of empty seq")
+}
+
 // O(1)
 func (xs *cons) Rest() (immut.Seq, error) {
-	xs.check()
 	return xs.rest, nil
 }
 func (empty) Rest() (immut.Seq, error) {
@@ -90,7 +102,6 @@ func (empty) Rest() (immut.Seq, error) {
 
 // O(1)
 func (xs *cons) IsEmpty() bool {
-	xs.check()
 	return false
 }
 func (empty) IsEmpty() bool { return true }
@@ -111,7 +122,6 @@ func (empty) DoBackwards(f func(interface{})) {}
 
 // O(n)
 func (xs *cons) Join(sep string, out io.Writer) {
-	xs.check()
 	fmt.Fprintf(out, "%v", xs.first)
 	if !xs.rest.IsEmpty() {
 		fmt.Fprint(out, sep)
@@ -121,27 +131,23 @@ func (xs *cons) Join(sep string, out io.Writer) {
 func (empty) Join(string, io.Writer) {}
 
 func (xs *cons) Reverse() immut.Seq {
-	xs.check()
 	return xs.rest.Reverse().AddBack(xs.first)
 }
 func (n empty) Reverse() immut.Seq { return n }
 
 // O(1)
 func (xs *cons) AddFront(x interface{}) immut.Seq {
-	xs.check()
 	return &cons{x, xs}
 }
 func (empty) AddFront(item interface{}) immut.Seq { return New(item) }
 
 // O(n)
 func (xs *cons) AddBack(x interface{}) immut.Seq {
-	xs.check()
 	return &cons{xs.first, xs.rest.AddBack(x)}
 }
 func (n empty) AddBack(item interface{}) immut.Seq { return New(item) }
 
 func (xs *cons) AddAll(that immut.Seq) immut.Seq {
-	xs.check()
 	if xs.rest.IsEmpty() {
 		return &cons{xs.first, that}
 	}
@@ -150,19 +156,16 @@ func (xs *cons) AddAll(that immut.Seq) immut.Seq {
 func (n empty) AddAll(other immut.Seq) immut.Seq { return other }
 
 func (xs *cons) Forall(f func(interface{}) bool) bool {
-	xs.check()
 	return f(xs.first) && xs.rest.Forall(f)
 }
 func (empty) Forall(f func(interface{}) bool) bool { return true }
 
 func (xs *cons) Map(f func(interface{}) interface{}) immut.Seq {
-	xs.check()
 	return &cons{f(xs.first), xs.rest.Map(f)}
 }
 func (n empty) Map(f func(interface{}) interface{}) immut.Seq { return n }
 
 func (xs *cons) Filter(f func(interface{}) bool) immut.Seq {
-	xs.check()
 	if f(xs.first) {
 		return &cons{xs.first, xs.rest.Filter(f)}
 	}
@@ -171,7 +174,6 @@ func (xs *cons) Filter(f func(interface{}) bool) immut.Seq {
 func (n empty) Filter(f func(interface{}) bool) immut.Seq { return n }
 
 func (xs *cons) String() string {
-	xs.check()
 	var buf bytes.Buffer
 	buf.WriteString("[")
 	xs.Join(",", &buf)
@@ -197,7 +199,6 @@ func (n empty) Remove(x interface{}) immut.Seq {
 }
 
 func (xs *cons) Items() (ys []interface{}) {
-	xs.check()
 	ys = make([]interface{}, xs.Len())
 	i := 0
 	xs.Do(func(x interface{}) {

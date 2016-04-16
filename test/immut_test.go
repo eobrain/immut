@@ -34,94 +34,40 @@ func str(xs interface{}, err error) string {
 
 func TestNth(t *testing.T) {
 	seqs := []immut.Seq{
-		empty,
+		// empty,
 		ints,
 		strings,
 		x8192(list.New("foo")),
 		list.New(19, "yellow", true),
 		list.New(2, 4, 7),
 		list.New(2, 4),
-		list.New(2),
+		// list.New(2),
 		list.New("Moe", "Larry", "Curly", "Shemp"),
-		emptyA,
+		// emptyA,
 		intsA,
 		stringsA,
 		x8192(slice.New("foo")),
 		slice.New(19, "yellow", true),
 		slice.New(2, 4, 7),
 		slice.New(2, 4),
-		slice.New(2),
+		// slice.New(2),
 		slice.New("Moe", "Larry", "Curly", "Shemp"),
-		emptySet,
+		// emptySet,
 		intsSet,
 		stringsSet,
 		set.New(2, 4, 3, 1),
 		intsSet.AddAll(stringsSet),
 		set.New("X", "Y", "Z").AddAll(set.New("a", "b", "c", "d", "e", "f", "g", "h")),
 		set.New(1, 2),
-		set.New(1),
+		// set.New(1),
 	}
 	for i, xs := range seqs {
-		if a, b := str(immut.Nth(xs, 0)), str(xs.Front()); a != b {
+		if a, b := str(xs.Get(0)), str(xs.Front()); a != b {
 			t.Errorf("%d: %s != %s", i, a, b)
 		}
-		if a, b := str(immut.Nth(xs, 1)), str(immut.Second(xs)); a != b {
+		if a, b := str(xs.Get(1)), str(immut.Second(xs)); a != b {
 			t.Errorf("%d: %s != %s", i, a, b)
 		}
-	}
-}
-
-func BenchmarkListNth(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		immut.Nth(ints, 2)
-	}
-}
-
-func BenchmarkListNthA(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		immut.Nth(intsA, 2)
-	}
-}
-
-func BenchmarkInstsSetNth(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		immut.Nth(intsSet, 2)
-	}
-}
-
-func BenchmarkMakeBigList(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		x8192(ints)
-	}
-}
-
-func BenchmarkMakeBigListA(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		x8192(intsA)
-	}
-}
-
-func BenchmarkBigListNth(b *testing.B) {
-	b.StopTimer()
-	big := x8192(list.New(1))
-	b.StartTimer()
-	for i := 0; i < b.N; i++ {
-		immut.Nth(big, 8000)
-	}
-}
-
-func BenchmarkBigListNthA(b *testing.B) {
-	b.StopTimer()
-	big := x8192(slice.New(1))
-	b.StartTimer()
-	for i := 0; i < b.N; i++ {
-		immut.Nth(big, 8000)
-	}
-}
-
-func BenchmarkNilIsEmpty(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		empty.IsEmpty()
 	}
 }
 
@@ -135,11 +81,11 @@ func findAddsTo10(data immut.Seq) (int, int, error) {
 	var loop func(int, int) (int, int, error)
 	loop = func(indexSum, i int) (int, int, error) {
 		j := indexSum - i
-		di, err := immut.Nth(data, i)
+		di, err := data.Get(i)
 		if err != nil {
 			log.Fatalf("Nth(%v,%v) -> %v, %v", data, i, di, err)
 		}
-		dj, err := immut.Nth(data, j)
+		dj, err := data.Get(j)
 		if err != nil {
 			panic(err)
 		}

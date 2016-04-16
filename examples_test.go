@@ -80,6 +80,23 @@ func ExampleFront() {
 	// 1 <nil>
 }
 
+func ExampleGet() {
+	seqs := []immut.Seq{
+		list.New(4, 3, 2, 1),
+		slice.New(4, 3, 2, 1),
+		set.New(4, 3, 2, 1),
+	}
+
+	for _, xs := range seqs {
+		fmt.Println(xs.Get(2))
+	}
+
+	// Output:
+	// 2 <nil>
+	// 2 <nil>
+	// 3 <nil>
+}
+
 func ExampleRest() {
 	seqs := []immut.Seq{
 		list.New(),
@@ -118,13 +135,13 @@ func ExampleSecond_list() {
 
 func ExampleBack_list() {
 	stooges := list.New("Larry", "Shemp", "Moe", "Curly")
-	fmt.Println(immut.Back(stooges))
+	fmt.Println(stooges.Back())
 	// Curly <nil>
 }
 
-func ExampleNth_list() {
+func ExampleGet_list() {
 	stooges := list.New("Larry", "Shemp", "Moe", "Curly")
-	fmt.Println(immut.Nth(stooges, 2))
+	fmt.Println(stooges.Get(2))
 	// Output:
 	// Moe <nil>
 }
@@ -144,13 +161,13 @@ func ExampleSecond_slice() {
 
 func ExampleBack_slice() {
 	stooges := slice.New("Larry", "Shemp", "Moe", "Curly")
-	fmt.Println(immut.Back(stooges))
+	fmt.Println(stooges.Back())
 	// Curly <nil>
 }
 
-func ExampleNth_slice() {
+func ExampleGet_slice() {
 	stooges := slice.New("Larry", "Shemp", "Moe", "Curly")
-	fmt.Println(immut.Nth(stooges, 2))
+	fmt.Println(stooges.Get(2))
 	// Output:
 	// Moe <nil>
 }
@@ -170,13 +187,13 @@ func ExampleSecond_set() {
 
 func ExampleBack_set() {
 	stooges := set.New("Larry", "Shemp", "Moe", "Curly")
-	fmt.Println(immut.Back(stooges)) // get last alphabetically
+	fmt.Println(stooges.Back()) // get last alphabetically
 	// Shemp <nil>
 }
 
-func ExampleNth_set() {
+func ExampleGet_set() {
 	stooges := set.New("Larry", "Shemp", "Moe", "Curly")
-	fmt.Println(immut.Nth(stooges, 2)) // get third alphabetically
+	fmt.Println(stooges.Get(2)) // get third alphabetically
 	// Output:
 	// Moe <nil>
 }

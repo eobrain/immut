@@ -49,6 +49,20 @@ func (xs slice) Len() int {
 }
 func (empty) Len() int { return 0 }
 
+// O(1)
+func (xs slice) Get(i int) (interface{}, error) {
+	if i < 0 {
+		return nil, fmt.Errorf("index %d is negativr", i, len(xs)-1)
+	}
+	if i >= len(xs) {
+		return nil, fmt.Errorf("index %d is not less than length %d]", i, len(xs))
+	}
+	return xs[i], nil
+}
+func (empty) Get(i int) (interface{}, error) {
+	return nil, fmt.Errorf("getting element of empty seq")
+}
+
 // O(n)
 func (xs slice) Contains(x interface{}) bool {
 	for _, xx := range xs {
@@ -66,6 +80,14 @@ func (xs slice) Front() (interface{}, error) {
 }
 func (empty) Front() (interface{}, error) {
 	return nil, fmt.Errorf("getting Front of empty seq")
+}
+
+// O(1)
+func (xs slice) Back() (interface{}, error) {
+	return xs[len(xs)-1], nil
+}
+func (empty) Back() (interface{}, error) {
+	return nil, fmt.Errorf("getting Back of empty seq")
 }
 
 func (xs slice) Rest() (immut.Seq, error) {

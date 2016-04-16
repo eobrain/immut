@@ -74,6 +74,21 @@ func (xs *Tree) Len() int {
 func (Empty) Len() int { return 0 }
 
 // O(log n)
+func (xs *Tree) Get(i int) (interface{}, error) {
+	if i < 0 {
+		return nil, fmt.Errorf("index %d is negative", i)
+	}
+	if i == 0 {
+		return xs.Front()
+	}
+	rest, _ := xs.Rest() // guaranteed not to be an error
+	return rest.Get(i - 1)
+}
+func (Empty) Get(i int) (interface{}, error) {
+	return nil, fmt.Errorf("Index is %d beyond end of seq", i)
+}
+
+// O(log n)
 func (xs *Tree) Contains(x interface{}) bool {
 	itemS := s(x) //inefficiently re-creating on every recursion
 	return x == xs.value ||
@@ -91,6 +106,17 @@ func (xs *Tree) Front() (interface{}, error) {
 }
 func (Empty) Front() (interface{}, error) {
 	return nil, fmt.Errorf("getting Front of empty seq")
+}
+
+// O(log(n))
+func (xs *Tree) Back() (interface{}, error) {
+	if xs.right.IsEmpty() {
+		return xs.value, nil
+	}
+	return xs.right.Back()
+}
+func (Empty) Back() (interface{}, error) {
+	return nil, fmt.Errorf("getting Back of empty seq")
 }
 
 // O(n^2 * log(n))

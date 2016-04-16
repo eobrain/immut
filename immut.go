@@ -27,11 +27,17 @@ type Seq interface {
 	// Len is the number of elements.
 	Len() int
 
+	// Get returns the ith element in the sequence
+	Get(i int) (interface{}, error)
+
 	// Contains is whether the item is in the Seq.
 	Contains(interface{}) bool
 
 	// Front returns the first item.
 	Front() (interface{}, error)
+
+	// Back returns the last item.
+	Back() (interface{}, error)
 
 	// Rest returns new list with all except the first item.
 	Rest() (Seq, error)
@@ -87,31 +93,6 @@ func Second(xs Seq) (interface{}, error) {
 		return nil, err
 	}
 	return rest.Front()
-}
-
-// Return item number n in sequence, where immut.Nth(xs,0) is the same
-// as xs.Front() and immut.Nth(xs,1) is the same as immut.Second(xs)
-func Nth(xs Seq, n int) (interface{}, error) {
-	if n == 0 {
-		return xs.Front()
-	}
-	rest, err := xs.Rest()
-	if err != nil {
-		return nil, err
-	}
-	return Nth(rest, n-1)
-}
-
-// Return the last item in the sequence. O(n) or O(n^3 * log(n))
-func Back(xs Seq) (interface{}, error) {
-	rest, err := xs.Rest()
-	if err != nil {
-		return nil, err
-	}
-	if rest.IsEmpty() {
-		return xs.Front()
-	}
-	return Back(rest)
 }
 
 // Return a string formed by concatenation of the string
