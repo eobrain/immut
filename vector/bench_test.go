@@ -1,12 +1,12 @@
-package set_test
+package vector_test
 
 import (
-	"github.com/eobrain/immut/set"
+	"github.com/eobrain/immut/vector"
 	"math/rand"
 	"testing"
 )
 
-var seq = set.New()
+var seq = slice.New()
 
 /////////////////////////////////////////////////////////////////////////////
 

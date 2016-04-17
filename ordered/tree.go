@@ -1,4 +1,4 @@
-package set
+package ordered
 
 // Copyright 2013 Eamonn O'Brien-Strain
 //

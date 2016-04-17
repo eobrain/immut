@@ -1,4 +1,4 @@
-package hash
+package unordered
 
 // Copyright 2013 Eamonn O'Brien-Strain
 //

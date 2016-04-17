@@ -3,10 +3,10 @@ package immut_test
 import (
 	"fmt"
 	"github.com/eobrain/immut"
-	"github.com/eobrain/immut/hash"
 	"github.com/eobrain/immut/list"
-	"github.com/eobrain/immut/set"
-	"github.com/eobrain/immut/slice"
+	"github.com/eobrain/immut/ordered"
+	"github.com/eobrain/immut/unordered"
+	"github.com/eobrain/immut/vector"
 	"os"
 )
 
@@ -14,12 +14,12 @@ func ExampleIsEmpty() {
 	seqs := []immut.Seq{
 		list.New(),
 		list.New(1, 2, 3),
-		slice.New(),
-		slice.New(1, 2, 3),
-		set.New(),
-		set.New(1, 2, 3),
-		hash.New(),
-		hash.New(1, 2, 3),
+		vector.New(),
+		vector.New(1, 2, 3),
+		ordered.New(),
+		ordered.New(1, 2, 3),
+		unordered.New(),
+		unordered.New(1, 2, 3),
 	}
 	for _, xs := range seqs {
 		fmt.Println(xs.IsEmpty())
@@ -39,14 +39,14 @@ func ExampleLen() {
 	seqs := []immut.Seq{
 		list.New(),
 		list.New(1, 2, 3),
-		slice.New(),
-		slice.New(1, 2, 3),
-		slice.Repeat(1000000, "foo"),
-		set.New(),
-		set.New(1, 2, 3),
+		vector.New(),
+		vector.New(1, 2, 3),
+		vector.Repeat(1000000, "foo"),
+		ordered.New(),
+		ordered.New(1, 2, 3),
 		list.New(make([]interface{}, 999)...),
-		hash.New(),
-		hash.New(1, 2, 3),
+		unordered.New(),
+		unordered.New(1, 2, 3),
 		list.Repeat(1000000, "foo"),
 	}
 	for _, xs := range seqs {
@@ -69,9 +69,9 @@ func ExampleLen() {
 func ExampleFront() {
 	seqs := []immut.Seq{
 		list.New(3, 2, 1),
-		slice.New(3, 2, 1),
-		set.New(3, 2, 1),
-		hash.New(999),
+		vector.New(3, 2, 1),
+		ordered.New(3, 2, 1),
+		unordered.New(999),
 	}
 
 	for _, xs := range seqs {
@@ -87,13 +87,13 @@ func ExampleFront() {
 
 func ExampleGet() {
 	seqs := []immut.Seq{
-		slice.New(4),
-		slice.New(4, 3, 2, 1),
+		vector.New(4),
+		vector.New(4, 3, 2, 1),
 		list.New(4),
 		list.New(4, 3, 2, 1),
-		set.New(4),
-		set.New(4, 3, 2, 1),
-		hash.New(999),
+		ordered.New(4),
+		ordered.New(4, 3, 2, 1),
+		unordered.New(999),
 	}
 
 	for _, xs := range seqs {
@@ -113,8 +113,8 @@ func ExampleGet() {
 func ExampleRest() {
 	seqs := []immut.Seq{
 		list.New(3, 2, 1),
-		slice.New(3, 2, 1),
-		set.New(3, 2, 1),
+		vector.New(3, 2, 1),
+		ordered.New(3, 2, 1),
 	}
 
 	for _, xs := range seqs {
@@ -147,41 +147,41 @@ func ExampleGet_list() {
 	// Moe true
 }
 
-func ExampleFront_slice() {
-	stooges := slice.New("Larry", "Shemp", "Moe", "Curly")
+func ExampleFront_vector() {
+	stooges := vector.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Front())
 	// Output:
 	// Larry
 }
 
-func ExampleBack_slice() {
-	stooges := slice.New("Larry", "Shemp", "Moe", "Curly")
+func ExampleBack_vector() {
+	stooges := vector.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Back())
 	// Curly
 }
 
-func ExampleGet_slice() {
-	stooges := slice.New("Larry", "Shemp", "Moe", "Curly")
+func ExampleGet_vector() {
+	stooges := vector.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Get(2))
 	// Output:
 	// Moe true
 }
 
-func ExampleFront_set() {
-	stooges := set.New("Larry", "Shemp", "Moe", "Curly")
+func ExampleFront_ordered() {
+	stooges := ordered.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Front()) // get first alphabetically
 	// Output:
 	// Curly
 }
 
-func ExampleBack_set() {
-	stooges := set.New("Larry", "Shemp", "Moe", "Curly")
+func ExampleBack_ordered() {
+	stooges := ordered.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Back()) // get last alphabetically
 	// Shemp
 }
 
-func ExampleGet_set() {
-	stooges := set.New("Larry", "Shemp", "Moe", "Curly")
+func ExampleGet_ordered() {
+	stooges := ordered.New("Larry", "Shemp", "Moe", "Curly")
 	fmt.Println(stooges.Get(2)) // get third alphabetically
 	// Output:
 	// Moe true
@@ -214,10 +214,10 @@ func ExampleRemove_list() {
 	// [one,two,three]
 }
 
-func ExampleRemove_slice() {
-	empty := slice.New()
-	ints := slice.New(1, 2, 3)
-	strings := slice.New("one", "two", "three", "four")
+func ExampleRemove_vector() {
+	empty := vector.New()
+	ints := vector.New(1, 2, 3)
+	strings := vector.New("one", "two", "three", "four")
 	fmt.Println(empty.Remove(33))
 	fmt.Println(ints.Remove(33))
 	fmt.Println(ints.Remove("foo"))
@@ -239,10 +239,10 @@ func ExampleRemove_slice() {
 	// [one,two,three]
 }
 
-func ExampleRemove_set() {
-	empty := set.New()
-	ints := set.New(1, 2, 3)
-	strings := set.New("one", "two", "three", "four")
+func ExampleRemove_ordered() {
+	empty := ordered.New()
+	ints := ordered.New(1, 2, 3)
+	strings := ordered.New("one", "two", "three", "four")
 	fmt.Println(empty.Remove(33))
 	fmt.Println(ints.Remove(33))
 	fmt.Println(ints.Remove("foo"))
@@ -266,10 +266,10 @@ func ExampleRemove_set() {
 	// {one,three,two}
 }
 
-func ExampleRemove_hash() {
-	empty := hash.New()
-	one := hash.New("one")
-	both := hash.New("one", "two")
+func ExampleRemove_unordered() {
+	empty := unordered.New()
+	one := unordered.New("one")
+	both := unordered.New("one", "two")
 	fmt.Println(empty.Remove(33))
 	fmt.Println(one.Remove("nope"))
 	fmt.Println(one.Remove("one"))
@@ -291,9 +291,9 @@ func ExampleAddAll_list() {
 	// [one,two,three,four,1,2,3]
 }
 
-func ExampleAddAll_slice() {
-	ints := slice.New(1, 2, 3)
-	strings := slice.New("one", "two", "three", "four")
+func ExampleAddAll_vector() {
+	ints := vector.New(1, 2, 3)
+	strings := vector.New("one", "two", "three", "four")
 	fmt.Println(ints.AddAll(strings))
 	fmt.Println(strings.AddAll(ints))
 	// Output:
@@ -301,30 +301,30 @@ func ExampleAddAll_slice() {
 	// [one,two,three,four,1,2,3]
 }
 
-func ExampleAddAll_set() {
-	ints := set.New(1, 2, 3)
-	strings := set.New("one", "two", "three", "four")
+func ExampleAddAll_ordered() {
+	ints := ordered.New(1, 2, 3)
+	strings := ordered.New("one", "two", "three", "four")
 	fmt.Println(ints.AddAll(strings))
 	fmt.Println(strings.AddAll(ints))
 
 	fmt.Println(ints.AddAll(strings))
 	fmt.Println(strings.AddAll(ints))
 	fmt.Println(
-		set.New("a", "b", "c", "e", "d", "f", "g", "h").AddAll(set.New("X")))
+		ordered.New("a", "b", "c", "e", "d", "f", "g", "h").AddAll(ordered.New("X")))
 	fmt.Println(
-		set.New("X").AddAll(set.New("a", "b", "c", "d", "e", "g", "f", "h")))
+		ordered.New("X").AddAll(ordered.New("a", "b", "c", "d", "e", "g", "f", "h")))
 	fmt.Println(
-		set.New("a", "b", "c", "d", "e", "f", "g", "h").AddAll(set.New("X", "Y")))
+		ordered.New("a", "b", "c", "d", "e", "f", "g", "h").AddAll(ordered.New("X", "Y")))
 	fmt.Println(
-		set.New("X", "Y").AddAll(set.New("a", "b", "c", "d", "e", "f", "g", "h")))
+		ordered.New("X", "Y").AddAll(ordered.New("a", "b", "c", "d", "e", "f", "g", "h")))
 	fmt.Println(
-		set.New("a", "b", "c", "d", "e", "f", "g", "h").AddAll(set.New("X", "Y")))
+		ordered.New("a", "b", "c", "d", "e", "f", "g", "h").AddAll(ordered.New("X", "Y")))
 	fmt.Println(
-		set.New("X", "Y").AddAll(set.New("a", "b", "c", "d", "e", "f", "g", "h")))
+		ordered.New("X", "Y").AddAll(ordered.New("a", "b", "c", "d", "e", "f", "g", "h")))
 	fmt.Println(
-		set.New("a", "b", "c", "d", "e", "f", "g", "h").AddAll(set.New("X", "Y", "Z")))
+		ordered.New("a", "b", "c", "d", "e", "f", "g", "h").AddAll(ordered.New("X", "Y", "Z")))
 	fmt.Println(
-		set.New("X", "Y", "Z").AddAll(set.New("a", "b", "c", "d", "e", "f", "g", "h")))
+		ordered.New("X", "Y", "Z").AddAll(ordered.New("a", "b", "c", "d", "e", "f", "g", "h")))
 	// Output:
 	// {1,2,3,four,one,three,two}
 	// {1,2,3,four,one,three,two}
@@ -341,13 +341,13 @@ func ExampleAddAll_set() {
 }
 
 func ExampleAddFront() {
-	slice := slice.New("one", "two", "three", "four")
+	vector := vector.New("one", "two", "three", "four")
 	list := list.New("one", "two", "three", "four")
-	set := set.New("one", "two", "three", "four")
-	unordered := hash.New("one", "two", "three", "four")
+	ordered := ordered.New("one", "two", "three", "four")
+	unordered := unordered.New("one", "two", "three", "four")
 	fmt.Println(list.AddFront("iiiii"))
-	fmt.Println(slice.AddFront("iiiii"))
-	fmt.Println(set.AddFront("iiiii"))
+	fmt.Println(vector.AddFront("iiiii"))
+	fmt.Println(ordered.AddFront("iiiii"))
 	fmt.Println(unordered.AddFront("iiiii").Len())
 	// Output:
 	// [iiiii,one,two,three,four]
@@ -356,13 +356,13 @@ func ExampleAddFront() {
 	// 5
 }
 
-func ExampleAddFront_set() {
-	ints := set.New(1, 2, 3)
+func ExampleAddFront_ordered() {
+	ints := ordered.New(1, 2, 3)
 
-	fmt.Println(set.New(1).AddFront(2))
-	fmt.Println(set.New(2).AddFront(1))
-	fmt.Println(set.New("aaa").AddFront("bbb"))
-	fmt.Println(set.New("bbb").AddFront("aaa"))
+	fmt.Println(ordered.New(1).AddFront(2))
+	fmt.Println(ordered.New(2).AddFront(1))
+	fmt.Println(ordered.New("aaa").AddFront("bbb"))
+	fmt.Println(ordered.New("bbb").AddFront("aaa"))
 	fmt.Println(ints.AddFront(1))
 	fmt.Println(ints.AddFront(2))
 	fmt.Println(ints.AddFront(3))
@@ -381,13 +381,13 @@ func ExampleAddFront_set() {
 }
 
 func ExampleAddBack() {
-	slice := slice.New("one", "two", "three", "four")
+	vector := vector.New("one", "two", "three", "four")
 	list := list.New("one", "two", "three", "four")
-	set := set.New("one", "two", "three", "four")
-	unordered := hash.New("one", "two", "three", "four")
+	ordered := ordered.New("one", "two", "three", "four")
+	unordered := unordered.New("one", "two", "three", "four")
 	fmt.Println(list.AddBack("iiiii"))
-	fmt.Println(slice.AddBack("iiiii"))
-	fmt.Println(set.AddBack("iiiii"))
+	fmt.Println(vector.AddBack("iiiii"))
+	fmt.Println(ordered.AddBack("iiiii"))
 	fmt.Println(unordered.AddBack("iiiii").Len())
 	// Output:
 	// [one,two,three,four,iiiii]
@@ -397,18 +397,18 @@ func ExampleAddBack() {
 }
 
 func ExampleDo_square() {
-	slice := slice.New(2, 30, 40)
+	vector := vector.New(2, 30, 40)
 	list := list.New(2, 30, 40)
-	set := set.New(2, 30, 40)
+	ordered := ordered.New(2, 30, 40)
 
 	printSquare := func(item interface{}) {
 		i := item.(int)
 		fmt.Println(i * i)
 	}
 
-	slice.Do(printSquare)
+	vector.Do(printSquare)
 	list.Do(printSquare)
-	set.Do(printSquare)
+	ordered.Do(printSquare)
 
 	// Output:
 	// 4
@@ -424,10 +424,10 @@ func ExampleDo_square() {
 
 func ExampleDo_sum() {
 	seqs := []immut.Seq{
-		slice.New(2, 30, 40),
+		vector.New(2, 30, 40),
 		list.New(2, 30, 40),
-		hash.New(2, 30, 40),
-		set.New(2, 30, 40),
+		unordered.New(2, 30, 40),
+		ordered.New(2, 30, 40),
 	}
 	for _, seq := range seqs {
 		total := 0
@@ -445,18 +445,18 @@ func ExampleDo_sum() {
 }
 
 func ExampleDoBackwards() {
-	slice := slice.New(2, 30, 40)
+	vector := vector.New(2, 30, 40)
 	list := list.New(2, 30, 40)
-	set := set.New(2, 30, 40)
+	ordered := ordered.New(2, 30, 40)
 
 	printSquare := func(item interface{}) {
 		i := item.(int)
 		fmt.Println(i * i)
 	}
 
-	slice.DoBackwards(printSquare)
+	vector.DoBackwards(printSquare)
 	list.DoBackwards(printSquare)
-	set.DoBackwards(printSquare)
+	ordered.DoBackwards(printSquare)
 
 	// Output:
 	// 1600
@@ -472,10 +472,10 @@ func ExampleDoBackwards() {
 
 func ExampleDoBackwards_sum() {
 	seqs := []immut.Seq{
-		slice.New(2, 30, 40),
+		vector.New(2, 30, 40),
 		list.New(2, 30, 40),
-		hash.New(2, 30, 40),
-		set.New(2, 30, 40),
+		unordered.New(2, 30, 40),
+		ordered.New(2, 30, 40),
 	}
 	for _, seq := range seqs {
 		total := 0
@@ -506,12 +506,12 @@ func ExampleJoin_list() {
 	// 1 <--> 2 <--> 3
 }
 
-func ExampleJoin_slice() {
-	strings := slice.New("one", "two", "three", "four")
+func ExampleJoin_vector() {
+	strings := vector.New("one", "two", "three", "four")
 	strings.Join("|", os.Stdout)
 	fmt.Println()
 
-	ints := slice.New(1, 2, 3)
+	ints := vector.New(1, 2, 3)
 	ints.Join(" <--> ", os.Stdout)
 	fmt.Println()
 
@@ -520,12 +520,12 @@ func ExampleJoin_slice() {
 	// 1 <--> 2 <--> 3
 }
 
-func ExampleJoin_set() {
-	strings := set.New("one", "two", "three", "four")
+func ExampleJoin_ordered() {
+	strings := ordered.New("one", "two", "three", "four")
 	strings.Join("|", os.Stdout)
 	fmt.Println()
 
-	ints := set.New(1, 2, 3)
+	ints := ordered.New(1, 2, 3)
 	ints.Join(" <--> ", os.Stdout)
 	fmt.Println()
 
@@ -535,9 +535,9 @@ func ExampleJoin_set() {
 }
 
 func Example_sort() {
-	fmt.Println(set.New(333, 111, 222))
-	fmt.Println(set.New(3, 11, 222))
-	fmt.Println(set.New(4, 900, 1600))
+	fmt.Println(ordered.New(333, 111, 222))
+	fmt.Println(ordered.New(3, 11, 222))
+	fmt.Println(ordered.New(4, 900, 1600))
 
 	// Output
 	// {111,222,333}
@@ -546,18 +546,18 @@ func Example_sort() {
 }
 
 func ExampleMap_integers() {
-	slice := slice.New(2, 30, 40)
+	vector := vector.New(2, 30, 40)
 	list := list.New(2, 30, 40)
-	set := set.New(2, 30, 40)
+	ordered := ordered.New(2, 30, 40)
 
 	square := func(item interface{}) interface{} {
 		i := item.(int)
 		return i * i
 	}
 
-	fmt.Println(slice.Map(square))
+	fmt.Println(vector.Map(square))
 	fmt.Println(list.Map(square))
-	fmt.Println(set.Map(square)) // sort alphabetically, not numerically
+	fmt.Println(ordered.Map(square)) // sort alphabetically, not numerically
 
 	// Output:
 	// [4,900,1600]
@@ -566,16 +566,16 @@ func ExampleMap_integers() {
 }
 
 func ExampleMap_strings() {
-	slice := slice.New("BBB", "AAA", "CCC")
+	vector := vector.New("BBB", "AAA", "CCC")
 	list := list.New("BBB", "AAA", "CCC")
-	set := set.New("BBB", "AAA", "CCC")
-	unordered := hash.New("BBB", "AAA", "CCC")
+	ordered := ordered.New("BBB", "AAA", "CCC")
+	unordered := unordered.New("BBB", "AAA", "CCC")
 
 	constant := func(item interface{}) interface{} { return "foo" }
 
-	fmt.Println(slice.Map(constant))
+	fmt.Println(vector.Map(constant))
 	fmt.Println(list.Map(constant))
-	fmt.Println(set.Map(constant))       // set semantics: just one element
+	fmt.Println(ordered.Map(constant))   // set semantics: just one element
 	fmt.Println(unordered.Map(constant)) // set semantics: just one element
 
 	// Output:
@@ -586,18 +586,18 @@ func ExampleMap_strings() {
 }
 
 func ExampleFilter_integers() {
-	slice := slice.New(2, 30, 40)
+	vector := vector.New(2, 30, 40)
 	list := list.New(2, 30, 40)
-	set := set.New(2, 30, 40)
+	ordered := ordered.New(2, 30, 40)
 
 	endsWithZero := func(item interface{}) bool {
 		i := item.(int)
 		return i%10 == 0
 	}
 
-	fmt.Println(slice.Filter(endsWithZero))
+	fmt.Println(vector.Filter(endsWithZero))
 	fmt.Println(list.Filter(endsWithZero))
-	fmt.Println(set.Filter(endsWithZero))
+	fmt.Println(ordered.Filter(endsWithZero))
 
 	// Output:
 	// [30,40]
@@ -606,15 +606,15 @@ func ExampleFilter_integers() {
 }
 
 func ExampleFilter_strings() {
-	slice := slice.New("BBB", "AAA", "CCCCC")
+	vector := vector.New("BBB", "AAA", "CCCCC")
 	list := list.New("BBB", "AAA", "CCCCC")
-	set := set.New("BBB", "AAA", "CCCCC")
+	ordered := ordered.New("BBB", "AAA", "CCCCC")
 
 	isTriple := func(item interface{}) bool { return len(item.(string)) == 3 }
 
-	fmt.Println(slice.Filter(isTriple))
+	fmt.Println(vector.Filter(isTriple))
 	fmt.Println(list.Filter(isTriple))
-	fmt.Println(set.Filter(isTriple))
+	fmt.Println(ordered.Filter(isTriple))
 
 	// Output:
 	// [BBB,AAA]
@@ -643,14 +643,14 @@ func Example_list() {
 	// [5,7,10]
 }
 
-func Example_slice() {
+func Example_vector() {
 	// Ported from http://java.ociweb.com/mark/clojure/article.html#Collections
 
-	count := slice.New(19, "yellow", true).Len()
+	count := vector.New(19, "yellow", true).Len()
 
-	reverse := slice.New(2, 4, 7).Reverse()
+	reverse := vector.New(2, 4, 7).Reverse()
 
-	mapped := slice.New(2, 4, 7).Map(func(x interface{}) interface{} {
+	mapped := vector.New(2, 4, 7).Map(func(x interface{}) interface{} {
 		return x.(int) + 3
 	})
 
@@ -664,14 +664,14 @@ func Example_slice() {
 	// [5,7,10]
 }
 
-func Example_set() {
+func Example_ordered() {
 	// Ported from http://java.ociweb.com/mark/clojure/article.html#Collections
 
-	count := set.New(19, "yellow", true).Len()
+	count := ordered.New(19, "yellow", true).Len()
 
-	reverse := set.New(2, 4, 7).Reverse()
+	reverse := ordered.New(2, 4, 7).Reverse()
 
-	mapped := set.New(2, 4, 7).Map(func(x interface{}) interface{} {
+	mapped := ordered.New(2, 4, 7).Map(func(x interface{}) interface{} {
 		return x.(int) + 3
 	})
 

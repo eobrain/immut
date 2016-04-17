@@ -1,12 +1,12 @@
-package slice_test
+package ordered_test
 
 import (
-	"github.com/eobrain/immut/slice"
+	"github.com/eobrain/immut/ordered"
 	"math/rand"
 	"testing"
 )
 
-var seq = slice.New()
+var seq = ordered.New()
 
 /////////////////////////////////////////////////////////////////////////////
 

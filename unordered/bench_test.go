@@ -1,16 +1,18 @@
-package hash_test
+package unordered_test
 
 import (
-	"github.com/eobrain/immut/hash"
+	"fmt"
+	"github.com/eobrain/immut/unordered"
 	"math/rand"
 	"testing"
 )
 
-var seq = hash.New()
+var seq = unordered.New()
 
 /////////////////////////////////////////////////////////////////////////////
 
 func init() {
+	fmt.Println("unordered")
 	for i := 0; i < 1000; i++ {
 		seq = seq.AddFront(rand.Int())
 	}

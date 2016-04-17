@@ -1,4 +1,4 @@
-package slice
+package vector
 
 // Copyright 2013 Eamonn O'Brien-Strain
 //

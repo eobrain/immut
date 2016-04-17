@@ -1,6 +1,7 @@
 package list_test
 
 import (
+	"fmt"
 	"github.com/eobrain/immut/list"
 	"math/rand"
 	"testing"
@@ -11,6 +12,7 @@ var seq = list.New()
 /////////////////////////////////////////////////////////////////////////////
 
 func init() {
+	fmt.Println("list")
 	for i := 0; i < 1000; i++ {
 		seq = seq.AddFront(rand.Int())
 	}
