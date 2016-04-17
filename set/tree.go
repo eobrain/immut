@@ -110,13 +110,12 @@ func (xs *Tree) Back() interface{} {
 }
 func (Empty) Back() interface{} { panic("getting Back of empty seq") }
 
-// O(n^2 * log(n))
+// O(log(n))
 func (xs *Tree) Rest() immut.Seq {
 	if xs.left.IsEmpty() {
 		return xs.right
 	}
-	// Perhaps not most efficient
-	return xs.left.Rest().AddFront(xs.value).AddAll(xs.right)
+	return &Tree{xs.value, xs.valueS, xs.left.Rest(), xs.right}
 }
 func (Empty) Rest() immut.Seq {
 	panic("getting Rest of empty seq")
@@ -266,9 +265,6 @@ func (xs *Tree) Filter(f func(interface{}) bool) immut.Seq {
 	}
 	// exclude root
 	if xs.left.IsEmpty() {
-		if xs.right.IsEmpty() {
-			return Empty{}
-		}
 		return xs.right.Filter(f)
 	}
 	if xs.right.IsEmpty() {
