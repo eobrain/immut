@@ -3,6 +3,7 @@ package immut_test
 import (
 	"fmt"
 	"github.com/eobrain/immut"
+	"github.com/eobrain/immut/hash"
 	"github.com/eobrain/immut/list"
 	"github.com/eobrain/immut/set"
 	"github.com/eobrain/immut/slice"
@@ -17,11 +18,15 @@ func ExampleIsEmpty() {
 		slice.New(1, 2, 3),
 		set.New(),
 		set.New(1, 2, 3),
+		hash.New(),
+		hash.New(1, 2, 3),
 	}
 	for _, xs := range seqs {
 		fmt.Println(xs.IsEmpty())
 	}
 	// Output:
+	// true
+	// false
 	// true
 	// false
 	// true
@@ -40,6 +45,8 @@ func ExampleLen() {
 		set.New(),
 		set.New(1, 2, 3),
 		list.New(make([]interface{}, 999)...),
+		hash.New(),
+		hash.New(1, 2, 3),
 		list.Repeat(1000000, "foo"),
 	}
 	for _, xs := range seqs {
@@ -54,6 +61,8 @@ func ExampleLen() {
 	// 0
 	// 3
 	// 999
+	// 0
+	// 3
 	// 1000000
 }
 
@@ -62,6 +71,7 @@ func ExampleFront() {
 		list.New(3, 2, 1),
 		slice.New(3, 2, 1),
 		set.New(3, 2, 1),
+		hash.New(999),
 	}
 
 	for _, xs := range seqs {
@@ -72,6 +82,7 @@ func ExampleFront() {
 	// 3
 	// 3
 	// 1
+	// 999
 }
 
 func ExampleGet() {
@@ -82,6 +93,7 @@ func ExampleGet() {
 		list.New(4, 3, 2, 1),
 		set.New(4),
 		set.New(4, 3, 2, 1),
+		hash.New(999),
 	}
 
 	for _, xs := range seqs {
@@ -95,6 +107,7 @@ func ExampleGet() {
 	// 2 true
 	// false
 	// 3 true
+	// false
 }
 
 func ExampleRest() {
@@ -253,6 +266,21 @@ func ExampleRemove_set() {
 	// {one,three,two}
 }
 
+func ExampleRemove_hash() {
+	empty := hash.New()
+	one := hash.New("one")
+	both := hash.New("one", "two")
+	fmt.Println(empty.Remove(33))
+	fmt.Println(one.Remove("nope"))
+	fmt.Println(one.Remove("one"))
+	fmt.Println(both.Remove("one"))
+	// Output:
+	// {}
+	// {one}
+	// {}
+	// {two}
+}
+
 func ExampleAddAll_list() {
 	ints := list.New(1, 2, 3)
 	strings := list.New("one", "two", "three", "four")
@@ -316,13 +344,16 @@ func ExampleAddFront() {
 	slice := slice.New("one", "two", "three", "four")
 	list := list.New("one", "two", "three", "four")
 	set := set.New("one", "two", "three", "four")
+	unordered := hash.New("one", "two", "three", "four")
 	fmt.Println(list.AddFront("iiiii"))
 	fmt.Println(slice.AddFront("iiiii"))
 	fmt.Println(set.AddFront("iiiii"))
+	fmt.Println(unordered.AddFront("iiiii").Len())
 	// Output:
 	// [iiiii,one,two,three,four]
 	// [iiiii,one,two,three,four]
 	// {four,iiiii,one,three,two}
+	// 5
 }
 
 func ExampleAddFront_set() {
@@ -353,16 +384,19 @@ func ExampleAddBack() {
 	slice := slice.New("one", "two", "three", "four")
 	list := list.New("one", "two", "three", "four")
 	set := set.New("one", "two", "three", "four")
+	unordered := hash.New("one", "two", "three", "four")
 	fmt.Println(list.AddBack("iiiii"))
 	fmt.Println(slice.AddBack("iiiii"))
 	fmt.Println(set.AddBack("iiiii"))
+	fmt.Println(unordered.AddBack("iiiii").Len())
 	// Output:
 	// [one,two,three,four,iiiii]
 	// [one,two,three,four,iiiii]
 	// {four,iiiii,one,three,two}
+	// 5
 }
 
-func ExampleDo() {
+func ExampleDo_square() {
 	slice := slice.New(2, 30, 40)
 	list := list.New(2, 30, 40)
 	set := set.New(2, 30, 40)
@@ -386,6 +420,28 @@ func ExampleDo() {
 	// 4
 	// 900
 	// 1600
+}
+
+func ExampleDo_sum() {
+	seqs := []immut.Seq{
+		slice.New(2, 30, 40),
+		list.New(2, 30, 40),
+		hash.New(2, 30, 40),
+		set.New(2, 30, 40),
+	}
+	for _, seq := range seqs {
+		total := 0
+		seq.Do(func(x interface{}) {
+			total += x.(int)
+		})
+		fmt.Println(total)
+	}
+
+	// Output:
+	// 72
+	// 72
+	// 72
+	// 72
 }
 
 func ExampleDoBackwards() {
@@ -412,6 +468,28 @@ func ExampleDoBackwards() {
 	// 1600
 	// 900
 	// 4
+}
+
+func ExampleDoBackwards_sum() {
+	seqs := []immut.Seq{
+		slice.New(2, 30, 40),
+		list.New(2, 30, 40),
+		hash.New(2, 30, 40),
+		set.New(2, 30, 40),
+	}
+	for _, seq := range seqs {
+		total := 0
+		seq.DoBackwards(func(x interface{}) {
+			total += x.(int)
+		})
+		fmt.Println(total)
+	}
+
+	// Output:
+	// 72
+	// 72
+	// 72
+	// 72
 }
 
 func ExampleJoin_list() {
@@ -491,16 +569,19 @@ func ExampleMap_strings() {
 	slice := slice.New("BBB", "AAA", "CCC")
 	list := list.New("BBB", "AAA", "CCC")
 	set := set.New("BBB", "AAA", "CCC")
+	unordered := hash.New("BBB", "AAA", "CCC")
 
 	constant := func(item interface{}) interface{} { return "foo" }
 
 	fmt.Println(slice.Map(constant))
 	fmt.Println(list.Map(constant))
-	fmt.Println(set.Map(constant)) // set semantics: just one element
+	fmt.Println(set.Map(constant))       // set semantics: just one element
+	fmt.Println(unordered.Map(constant)) // set semantics: just one element
 
 	// Output:
 	// [foo,foo,foo]
 	// [foo,foo,foo]
+	// {foo}
 	// {foo}
 }
 
